@@ -92,56 +92,22 @@ body{
     height: 39px;
     position: absolute;
     border-radius: 10px;
-    top: 45%;
+    top: 53%;
     left: 40%;
 }
 
-.requisitos{
+#altered{
     position: absolute;
+    font-size: 1.5rem;
+    top: 53.7%;
+    left: 41.7%;
 }
 
-#email{
-    all: unset;
-    color: rgb(0, 0, 0);
+#voltar{
     position: absolute;
-    justify-content: center;  
-    align-items: center;      
-    margin-top: 422px;
-    margin-left: 810px;
-    width: 330px;
-  
-}
-
-input::placeholder {
-    color: rgb(109, 109, 109);
-    font-size: 20px;
-  }
-  
-#enviar{
-    background-color: orange;
-    border: none;
-    width: 174px;
-    height: 40px;
-    color: green;
-    font-size: 20px;
-    border-radius: 6%;
+    font-size: 1.2rem;
+    top: 59%;
+    left: 45.5%;
+    color: #2B25C7;
     cursor: pointer;
-    position: absolute;
-    margin-top: 520px;
-    margin-left: 870px;
 }
-
-#enviar:hover {
-    transition: all 0.3s ease-out;
-    background-color: #007f14;
-    color: #ff962c;
-    cursor: pointer;     
-}
-
-#emailicon{
-    position: absolute;
-    margin-top: 415px;
-    margin-left: 775px;
-    height: 30px;
-}
-

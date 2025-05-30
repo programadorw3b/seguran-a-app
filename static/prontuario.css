@@ -51,23 +51,33 @@ body{
     height: 59px;
     position: absolute;
     top: 250px;
-    left: 590px;
+    left: 420px;
+}
+#fotoperfil{
+    color: black;
+    padding: 50px;
+    margin-left: -10px;
+    font-size: 12px; 
+}
+#nomepaciente{
+    color: black;
+    padding: 30px;
+    font-size: 12px;
 }
 
 #helmet{
     width: 66px;
     height: 77px;
     position: absolute;
-    top: 70px;
-    left: 45%;
-    cursor: pointer;
+    top: 47px;
+    left: 45% ;
 }
 
 #mindconnect{
     color: #008000;
     position: absolute;
     left: 49%;
-    top: 87px;
+    top: 60px;
     font-size: 36px;
 }
 
@@ -83,52 +93,53 @@ body{
     top: 50%;
     left: 50%;
     top: 265px;
-    left: 840px;
+    left: 800px;
 }
 
-#bege{
-    background-color: #b8b8b8;
+#area_anotacoes{
+    background-color: #D9D9D9;
     width: 380px;
-    height: 39px;
+    height: 220px;
     position: absolute;
     border-radius: 10px;
     top: 45%;
-    left: 40%;
+    left: 39%;
+    
 }
 
 .requisitos{
     position: absolute;
 }
 
-#email{
+#prontuario{
     all: unset;
-    color: rgb(0, 0, 0);
+    color: rgb(15, 207, 89);
     position: absolute;
     justify-content: center;  
     align-items: center;      
-    margin-top: 422px;
+    margin-top: 420px;
     margin-left: 810px;
     width: 330px;
+    padding-left: 10px;
   
 }
+#prontuario::placeholder{
+    color: rgb(255, 255, 255);
+}
 
-input::placeholder {
-    color: rgb(109, 109, 109);
-    font-size: 20px;
-  }
   
 #enviar{
     background-color: orange;
     border: none;
-    width: 174px;
+    width: 100px;
     height: 40px;
     color: green;
-    font-size: 20px;
+    font-size: 12px;
     border-radius: 6%;
     cursor: pointer;
-    position: absolute;
-    margin-top: 520px;
-    margin-left: 870px;
+    justify-self: center;   
+    margin-top: 620px;
+    margin-left: 820px;
 }
 
 #enviar:hover {
@@ -136,12 +147,5 @@ input::placeholder {
     background-color: #007f14;
     color: #ff962c;
     cursor: pointer;     
-}
-
-#emailicon{
-    position: absolute;
-    margin-top: 415px;
-    margin-left: 775px;
-    height: 30px;
 }
 

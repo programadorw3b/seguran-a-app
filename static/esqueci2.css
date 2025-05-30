@@ -59,7 +59,7 @@ body{
     height: 77px;
     position: absolute;
     top: 70px;
-    left: 45%;
+    left: 45% ;
     cursor: pointer;
 }
 
@@ -92,7 +92,18 @@ body{
     height: 39px;
     position: absolute;
     border-radius: 10px;
-    top: 45%;
+    top: 39%;
+    left: 40%;
+}
+
+
+#bege2{
+    background-color: #b8b8b8;
+    width: 380px;
+    height: 39px;
+    position: absolute;
+    border-radius: 10px;
+    top: 50%;
     left: 40%;
 }
 
@@ -100,21 +111,21 @@ body{
     position: absolute;
 }
 
-#email{
+#password{
     all: unset;
     color: rgb(0, 0, 0);
     position: absolute;
     justify-content: center;  
     align-items: center;      
-    margin-top: 422px;
+    margin-top: 366px;
     margin-left: 810px;
     width: 330px;
   
 }
 
 input::placeholder {
-    color: rgb(109, 109, 109);
-    font-size: 20px;
+    color: grey;
+    font-size: 18px;
   }
   
 #enviar{
@@ -124,10 +135,10 @@ input::placeholder {
     height: 40px;
     color: green;
     font-size: 20px;
-    border-radius: 6%;
+    border-radius: 9%;
     cursor: pointer;
     position: absolute;
-    margin-top: 520px;
+    margin-top: 570px;
     margin-left: 870px;
 }
 
@@ -138,10 +149,27 @@ input::placeholder {
     cursor: pointer;     
 }
 
-#emailicon{
+#passwordicon{
     position: absolute;
-    margin-top: 415px;
-    margin-left: 775px;
-    height: 30px;
+    margin-top: 359px;
+    margin-left: 773px;
+    height: 29px;
 }
 
+#password2{
+    all: unset;
+    color: rgb(0, 0, 0);
+    position: absolute;
+    justify-content: center;  
+    align-items: center;      
+    margin-top: 468px;
+    margin-left: 810px;
+    width: 330px;
+}
+
+#passwordicon2{
+    position: absolute;
+    margin-top: 460px;
+    margin-left: 777px;
+    height: 29px;
+}
