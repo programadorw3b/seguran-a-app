@@ -133,7 +133,8 @@ def questionary():
         opcao_3 = int(request.form.get('causa'))
         opcao_4 = int(request.form.get('conversar'))
         opcao_5 = int(request.form.get('relaxar'))
-        total = opcao_1+opcao_2+opcao_3+opcao_4+opcao_5
+        total_ini = 6
+        total = opcao_1+opcao_2+opcao_3+opcao_4+opcao_5+total_ini
         if total <= 2:
             # aqui vai retornar uma mensagem de alerta de risco emocional
             return render_template('questionary_result.html')
