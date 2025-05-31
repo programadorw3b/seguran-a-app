@@ -43,7 +43,8 @@ def inicializar_banco():
                 celular INTEGER,
                 email TEXT UNIQUE NOT NULL,
                 senha TEXT NOT NULL,
-                admin INTEGER DEFAULT 0
+                admin INTEGER DEFAULT 0,
+                rec_code DATETIME
             );
         ''')
         db.execute('''
@@ -133,8 +134,7 @@ def questionary():
         opcao_3 = int(request.form.get('causa'))
         opcao_4 = int(request.form.get('conversar'))
         opcao_5 = int(request.form.get('relaxar'))
-        total_ini = 6
-        total = opcao_1+opcao_2+opcao_3+opcao_4+opcao_5+total_ini
+        total = opcao_1+opcao_2+opcao_3+opcao_4+opcao_5
         if total <= 2:
             # aqui vai retornar uma mensagem de alerta de risco emocional
             return render_template('questionary_result.html')
@@ -173,12 +173,13 @@ def feedback():
 def relax():
     return render_template('relax.html')
 
-
-'''
-Funções puro html:
 @app.route('/userterms')
 def termos():
     return render_template('userterms.html')
+
+'''
+Funções puro html:
+
 
 @app.route('/recomendations')
 def recomendation():
@@ -187,7 +188,7 @@ def recomendation():
 
 @app.route('/logout')
 def logout():
-    session.pop('usuario_id', None)
+    session.clear()
     return redirect(url_for('index'))
 # execução do app
 
