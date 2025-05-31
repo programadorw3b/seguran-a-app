@@ -4,6 +4,12 @@ import sqlite3
 from flask import Flask, render_template, request, redirect, url_for, session, flash, g
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
+import random
+import smtplib # enviar email
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from contextlib import contextmanager
+from datetime import datetime,timedelta
 load_dotenv()
 
 # inicio do app
@@ -44,7 +50,9 @@ def inicializar_banco():
                 email TEXT UNIQUE NOT NULL,
                 senha TEXT NOT NULL,
                 admin INTEGER DEFAULT 0,
-                rec_code DATETIME
+                rec_code INTEGER,
+                created DATETIME,
+                expired DATETIME
             );
         ''')
         db.execute('''
@@ -80,6 +88,50 @@ def inicializar_banco():
         ''')
         db.commit()
 
+# Recuperação de senha
+
+#Gerar código
+def codigo(email):
+    codigo = random.randint(1000,9999)
+    db = get_db()
+    email_exists = db.execute('SELECT nome FROM usuarios WHERE email=?',(email,)).fetchone()
+    print(email_exists)
+    agora = datetime.now()
+    expirou = agora + timedelta(minutes=5)
+    db.execute('UPDATE usuarios SET rec_code=?,created=?,expired=? WHERE email=?',(codigo,agora,expirou,email))
+    db.commit()
+
+#Apagar código
+@app.before_request
+def apagar_codigo():
+    db = get_db()
+    agora = datetime.now()
+    db.execute('UPDATE usuarios SET rec_code=NULL, created=NULL, expired=NULL WHERE expired < ?',(agora,))
+    db.commit()
+
+#Enviar email
+def senha_cod(email,codigo):
+    remetente = os.getenv("REMETENTE") #adicionar remetente de email
+    remetente_senha = os.getenv("SENHA_REMETENTE") #adicionar senha do email do remetente
+    if email and codigo:
+        mensagem = MIMEMultipart()
+        mensagem['From'] = remetente
+        mensagem['To'] = email
+        mensagem['Subject'] = 'Código de recuperação de senha - MindConnect'
+        # corpo do email
+        db = get_db()
+        data = db.execute('SELECT * FROM usuarios WHERE email=?',(email,)).fetchone()
+        corpo = f"Olá {data[1]}, seu código de recuperação é o seguinte: {data[7]}, use-o logo pois ele irá expirar em 5 minutos."
+        mensagem.attach(MIMEText(corpo,'plain'))
+        try:
+            servidor_email = smtplib.SMTP('smtp.gmail.com',587)
+            servidor_email.starttls()
+            servidor_email.login(remetente,remetente_senha)
+            servidor_email.sendmail(remetente,email,mensagem.as_string())
+        except Exception as e:
+            print(f"Erro: {e}")
+        finally:
+            servidor_email.quit()
 
 # Rotas
 
@@ -173,9 +225,54 @@ def feedback():
 def relax():
     return render_template('relax.html')
 
+#Rota dos termos
 @app.route('/userterms')
 def termos():
     return render_template('userterms.html')
+
+
+#Rota esqueci senha
+@app.route('/password',methods=['GET','POST'])
+def password():
+    if request.method == 'POST':
+        email = request.form['email']
+        session['email'] = email
+        codigo(email)
+        db = get_db()
+        cod = db.execute('SELECT rec_code FROM usuarios WHERE email=?',(email,))
+        if not cod:
+            return "Código inexistente"
+        senha_cod(email,cod)
+        return redirect(url_for('password_recovery'))
+    return render_template('password.html')
+
+#Rota para nova senha
+@app.route('/password_recovery',methods=['GET','POST'])
+def password_recovery():
+    if request.method == "POST":
+        codigo = int(request.form.get('codigo'))
+        senha = request.form.get('password')
+        senha2 = request.form.get('password2')
+        email = session.get('email')
+        print(email)
+        db = get_db()
+        cod = db.execute('SELECT * FROM usuarios WHERE email=?',(email,)).fetchone()
+        print(codigo,cod)
+        if codigo == cod[7]:
+            if senha == senha2:
+                senha_segura = generate_password_hash(senha)
+                db.execute('UPDATE usuarios SET senha=?',(senha_segura,))
+                session.clear()
+                return redirect(url_for('password_confirm'))
+            else:
+                return "Senha 1 diferente da senha 2"
+        else:
+            return "Código inválido ou expirado"
+    return render_template('password_recovery.html') #Adicionar erro
+
+@app.route('/password_confirm')
+def password_confirm():
+    return render_template('password_confirm.html')
 
 '''
 Funções puro html:

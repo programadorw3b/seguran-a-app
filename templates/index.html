@@ -42,6 +42,7 @@
       {% else %}
         <p>Você não é admin!!!</p>
         <button>Não apagar o SITE</button>
+        <a href="{{ url_for('logout') }}">LOGOUT</a>
       {% endif %}
     {% endif %}
 
