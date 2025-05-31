@@ -3,3 +3,6 @@ Esse repositorio serve para colocar apenas o app com as pastas template e static
     * atualização de index,login,esqueci_senha,cadastro
     * imagens colocadas
     * app ainda não iniciado
+
+* o que foi feito até  hoje (30/05)
+    * ajeitamos templates, static e primeiras rotas

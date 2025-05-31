@@ -18,7 +18,7 @@
     </div>
     <nav id="nav-menu">
       <ul>
-        <li><a href="">Início</a></li>
+        <li><a href="{{ url_for('index') }}">Início</a></li>
         <li><a href="">Registrar Sentimentos</a></li>
         <li><a href="">Dicas de Relaxamento</a></li>
         <li><a href="">Agendar Consulta</a></li>
@@ -36,10 +36,10 @@
       <h1><i class="fas fa-bullhorn"></i> Denúncias e Sugestões</h1>
       <p>Ajude-nos a melhorar! Envie uma sugestão ou relate algo importante.</p>
 
-      <form class="formulario" action="#" method="post">
+      <form class="formulario" action="#" method="POST">
         <label for="tipo">Tipo de mensagem</label>
         <select id="tipo" name="tipo" required>
-          <option value="">Selecione</option>
+          <option disabled>Selecione</option>
           <option value="denuncia">Denúncia</option>
           <option value="sugestao">Sugestão</option>
         </select>
