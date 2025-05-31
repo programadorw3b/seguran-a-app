@@ -33,11 +33,15 @@
 
 
 <!-- FUNÇÃO TEMPORÁRIA PARA VERIFICAR SE O USUÁRIO LOGADO É ADMNISTRADOR OU NÃO, APAGUE APÓS ELA NÃO SER MAIS NECESSÁRIA -->
+
     {% if session %}
       {% if session['user_admin'] == 1 %}
         <p>Você é admin!!!</p>
+        <button>APAGAR O SITE</button>
+        <a href="{{ url_for('logout') }}">LOGOUT</a>
       {% else %}
         <p>Você não é admin!!!</p>
+        <button>Não apagar o SITE</button>
       {% endif %}
     {% endif %}
 
