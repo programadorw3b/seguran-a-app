@@ -24,23 +24,36 @@
     <nav id="nav-menu">
       <ul>
         <li><a href="">Registrar Sentimentos</a></li>
-        <li><a href="">Dicas de Relaxamento</a></li>
+        <li><a href="{{ url_for('relax') }}">Dicas de Relaxamento</a></li>
         <li><a href="">Agendar consulta</a></li>
       </ul>
     </nav>
 
     <div class="acoes-header">
+
+
+<!-- FUNÇÃO TEMPORÁRIA PARA VERIFICAR SE O USUÁRIO LOGADO É ADMNISTRADOR OU NÃO, APAGUE APÓS ELA NÃO SER MAIS NECESSÁRIA -->
+    {% if session %}
+      {% if session['user_admin'] == 1 %}
+        <p>Você é admin!!!</p>
+      {% else %}
+        <p>Você não é admin!!!</p>
+      {% endif %}
+    {% endif %}
+
+<!-- FUNÇÃO TEMPORÁRIA PARA VERIFICAR SE O USUÁRIO LOGADO É ADMNISTRADOR OU NÃO, APAGUE APÓS ELA NÃO SER MAIS NECESSÁRIA -->
+
       <a href="{{ url_for('questionary') }}"><button class="btn-destaque">Trilha do Bem Estar</button></a>
-      <a href="" class="login-icon"><i class="fas fa-user-circle"></i></a>
+      <a href="{{ url_for('login') }}" class="login-icon"><i class="fas fa-user-circle"></i></a>
     </div>
   </header>
 
   <!-- SLIDER -->
   <div class="slider">
     <div class="slides">
-      <div class="slide active"><img src="IMG/segurançacapacete.jpg" alt="Slide 1"></div>
-      <div class="slide"><img src="IMG/Capa trabalho banner 2.jpg" alt="Slide 2"></div>
-      <div class="slide"><img src="IMG/pexels-segurança1.jpg" alt="Slide 3"></div>
+      <div class="slide active"><img src="../static/imgs/Banner_slide1.png" alt="Slide 1"></div>
+      <div class="slide"><img src="../static/imgs/Banner_slide2.jpg" alt="Slide 2"></div>
+      <div class="slide"><img src="../static/imgs/Banner_slide3.png" alt="Slide 3"></div>
     </div>
 
     <div class="dots">

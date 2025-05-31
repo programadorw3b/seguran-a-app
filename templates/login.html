@@ -26,24 +26,24 @@
   <div class="container">
     <div class="login-box">
       <div class="logo">
-        <img src="IMG/LOGOPNG.png" alt="Logo MindConnect" />
+        <img src="../static/imgs/logo2.png" alt="Logo MindConnect" />
         <h1>MINDCONNECT</h1>
         <span>Login</span>
       </div>
 
-      <form>
+      <form method="POST">
         <input name="login" type="text" placeholder="Login" class="input" aria-label="Digite seu login">
         <input name="senha" type="password" placeholder="Senha" class="input" aria-label="Digite sua senha">
 
         <div class="captcha">
-          <input name="captcha" type="checkbox" id="captcha">
+          <input name="captcha" type="checkbox" id="captcha" required>
           <label for="captcha">Não sou um robô</label>
           <img src="https://www.gstatic.com/recaptcha/api2/logo_48.png" alt="reCAPTCHA">
         </div>
 
-        <a href="{{ url_for('cadastrar') }}" class="cadastre">Cadastre-se</a>
         <button type="submit" class="btn-entrar">Entrar</button>
-        <a href="{{ url_for('esqueci') }}" class="esqueceu">Esqueceu a senha?</a>
+        <a href="{{ url_for('cadastro') }}" class="cadastre">Cadastre-se</a>
+        <a href="" class="esqueceu">Esqueceu a senha?</a>
       </form>
     </div>
   </div>

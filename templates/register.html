@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static',filename='cadastrar.css') }}">
     <link rel="icon" href="../static/imgs/logo.png" type="img/png">
-    <title>home-tela8</title>
+    <title>MINDCONNECT - Cadastro</title>
 </head>
 <body>
         <header>
@@ -21,30 +21,26 @@
                 <h1>MINDCONNECT</h1>
                 <p>Cadastre-se</p>
 
-                <form class="requisitos">
+                <form method="POST" class="requisitos">
                     <img src="../static/imgs/usuário.png" id="usuario_icone1" alt="usuario_icone1">
                     <img src="../static/imgs/usuário.png" id="usuario_icone2" alt="usuario_icone2">
                     <img src="../static/imgs/e-mail.png" id="email_icone" alt="email_icone">
                     <img src="../static/imgs/cadeado.png" id="cadeado_icone" alt="cadeado_icone">
-                    <img src="../static/imgs/seta.png" id="seta_icone" alt="seta_icone">
+                    <a href="{{ url_for('login') }}"><img src="../static/imgs/seta.png" id="seta_icone" alt="seta_icone"></a>
                     <input type="text" id="nome" placeholder="Nome" name="nome" required>
                     <input type="text" id="sobrenome" placeholder="Sobrenome" name="sobrenome" required>
                     <input type="email" id="email" placeholder="E-mail" name="email" required>
                     <input type="password" id="senha" placeholder="Criar senha" name="senha" required>
                     <input type="checkbox" name="politicas" required/><label id="politicas" for="politicas">Eu concordo com os termos de uso e entendo que minhas informações serão mantidas em sigilo total.</label>
-        
                     <button type="submit" id="entrar" class="entrar">Entrar</button>
                 </form>
-
             </div>
-
             <div class="banner2">
                 <h1>Bem Vindo!</h1>
                 <img src="../static/imgs/seguranca-trab 1.png" id="seguranca" alt="seguranca">
             </div>
         </main>
 </body>
-
 <footer>
     <div>
         <img src="../static/imgs/acessibilidade.png" id="acessibilidade" alt="acessibilidade">

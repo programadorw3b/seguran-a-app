@@ -60,9 +60,9 @@ def inicializar_banco():
         db.execute('''
             CREATE TABLE IF NOT EXISTS consultas(
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                titulo TEXT NOT NULL,
+                tipo TEXT NOT NULL,
                 data TEXT NOT NULL,
-                
+                prontuario TEXT,
                 paciente_id INTEGER NOT NULL,
                 psicologo_id INTEGER NOT NULL,
                 FOREIGN KEY (paciente_id) REFERENCES usuarios (id),
@@ -83,13 +83,48 @@ def inicializar_banco():
 # Rotas
 
 #Rota index
-
 @app.route('/')
 def index():
     return render_template('index.html')
 
-# rota questionary
+#Rota para cadastro
+@app.route('/cadastro', methods=['GET','POST'])
+def cadastro():
+    if request.method == 'POST':
+        nome = request.form['nome']
+        email = request.form['email'].lower()
+        senha = request.form['senha']
+        senha_segura = generate_password_hash(senha)
+        db = get_db()
+        try:
+            db.execute('INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?)', (nome, email, senha_segura))
+            db.commit()
+            flash('Usuário cadastrado com sucesso!!!')
+            return redirect(url_for('index'))
+        except sqlite3.IntegrityError:
+            flash('E-mail já cadastrado!')
+            return render_template('register.html')
+    return render_template('register.html')
 
+#Rota para login
+@app.route('/login', methods=['GET','POST'])
+def login():
+    if request.method == 'POST':
+        login = request.form['login'].lower()
+        senha = request.form['senha']
+        db = get_db()
+        usuario = db.execute('SELECT * FROM usuarios WHERE email=?', (login, )).fetchone()
+        if usuario and check_password_hash(usuario['senha'], senha):
+            session['usuario_id'] = usuario['id']
+            session['user_admin'] = usuario['admin']
+            return redirect(url_for('index'))
+        else:
+            flash('Usuário ou senha inválidos.')
+            return render_template('login.html')
+    return render_template('login.html')
+
+
+#Rota questionary
 @app.route('/questionario',methods=['GET','POST'])
 def questionary():
     if request.method == 'POST':
@@ -132,23 +167,40 @@ def feedback():
         return redirect(url_for('index'))
     return render_template('feedback.html')
 
+#Rota de relaxamento
+@app.route('/relax')
+def relax():
+    return render_template('relax.html')
+
 
 '''
 Funções puro html:
 @app.route('/userterms')
 def termos():
     return render_template('userterms.html')
-@app.route('/relax')
-def relax():
-    return render_template('relax.html')
+
 @app.route('/recomendations')
-def relax():
+def recomendation():
     return render_template('recomendations.html')
 '''
 
+@app.route('/logout')
+def logout():
+    session.pop('usuario_id', None)
+    return redirect(url_for('index'))
 # execução do app
 
 if __name__ == '__main__':
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
     inicializar_banco()
+    with app.app_context():
+        db = get_db()
+        admin =  db.execute('SELECT * FROM usuarios where admin=1').fetchall()
+        if not admin:
+                adm_nome = os.getenv("ADM_NOME")
+                adm_email = os.getenv("ADM_EMAIL")
+                adm_senha = os.getenv("ADM_SENHA")
+                senha_adm = generate_password_hash(adm_senha)
+                db.execute('INSERT INTO usuarios (nome, email, senha, admin) VALUES (?, ?, ?, 1)', (adm_nome, adm_email, senha_adm))
+                db.commit()
     app.run(debug=True)
