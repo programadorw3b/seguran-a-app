@@ -134,23 +134,26 @@ def questionary():
         opcao_3 = int(request.form.get('causa'))
         opcao_4 = int(request.form.get('conversar'))
         opcao_5 = int(request.form.get('relaxar'))
-        total = opcao_1+opcao_2+opcao_3+opcao_4+opcao_5
+        total = opcao_1+opcao_2+opcao_3+opcao_4+opcao_5+6
         if total <= 2:
+            resultado = ["🔴 Alerta emocional", "Consulta com psicólogo online", "Áudio de primeiros socorros emocionais", "Registro de sentimentos", "Acesso a apoio confidencial e imediato"]
             # aqui vai retornar uma mensagem de alerta de risco emocional
-            return render_template('questionary_result.html')
+            return render_template('questionary_result.html', resultado=resultado)
         elif total <= 4:
+            resultado = ["🟡 Atenção moderada", "Técnicas de relaxamento", "Meditação guiada", "Diário emocional", "Ative lembretes para pausas e autocuidado"]
             #aqui vai retornar uma mensagem de atenção moderada
-            return render_template('questionary_result.html')
+            return render_template('questionary_result.html', resultado=resultado)
         else:
+            resultado = ["🟢 Bem-estar alto" "Continue com suas práticas de autocuidado", "Explore novos conteúdos preventivos", "Mantenha hábito saudáveis", "Experimente metas semanais"]
             #aqui vai retornar uma mensagem de bem-estar alto
-            return render_template('questionary_result.html')
+            return render_template('questionary_result.html', resultado=resultado)
     return render_template('questionary.html')
 
 # rota para norms
 
 @app.route('/norms')
 def norms():
-    return render_template('norms.html')
+    return render_template('norms.html') 
 
 # rota para feedback
 
