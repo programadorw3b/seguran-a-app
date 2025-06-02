@@ -236,6 +236,10 @@ def relax():
 def termos():
     return render_template('userterms.html')
 
+#Rota recomendações
+@app.route('/recomendations')
+def recomendation():
+    return render_template('recomendations.html')
 
 #Rota esqueci senha
 @app.route('/password',methods=['GET','POST'])
@@ -282,9 +286,7 @@ def password_confirm():
 
 '''
 Funções puro html:
-@app.route('/recomendations')
-def recomendation():
-    return render_template('recomendations.html')
+
 
 .env:
 SECRET_KEY=
