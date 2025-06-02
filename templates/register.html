@@ -15,34 +15,34 @@
             <div></div>
         </header>
     
+        <div class="banners">
         <main class="container">
             <div class="banner1">
                 <img src="../static/imgs/logo.png" alt="logo" id="logo">
                 <h1>MINDCONNECT</h1>
                 <p>Cadastre-se</p>
                 <form method="POST" class="requisitos">
-                    <img src="../static/imgs/usuário.png" id="usuario_icone1" alt="usuario_icone1">
-                    <img src="../static/imgs/usuário.png" id="usuario_icone2" alt="usuario_icone2">
+                    <img src="../static/imgs/usuário.png" id="usuario_icone" alt="usuario_icone">
+                    <img src="../static/imgs/celular.png" id="celular_icone" alt="celular_icone">
                     <img src="../static/imgs/e-mail.png" id="email_icone" alt="email_icone">
                     <img src="../static/imgs/cadeado.png" id="cadeado_icone" alt="cadeado_icone">
-                    <a href="{{ url_for('login') }}"><img src="../static/imgs/seta.png" id="seta_icone" alt="seta_icone"></a>
                     <input type="text" id="nome" placeholder="Nome" name="nome" required>
-                    <input type="text" id="sobrenome" placeholder="Sobrenome" name="sobrenome" required>
+                    <input type="text" id="celular" placeholder="Celular" name="celular" required>
                     <input type="email" id="email" placeholder="E-mail" name="email" required>
                     <input type="password" id="senha" placeholder="Criar senha" name="senha" required>
                     <input type="checkbox" name="politicas" required/><label id="politicas" for="politicas">Eu concordo com os <a href="{{ url_for('termos') }}" target="none">termos de uso</a> e entendo que minhas informações serão mantidas em sigilo total.</label>
                     <button type="submit" id="entrar" class="entrar">Entrar</button>
                 </form>
+
+                <a href="{{ url_for('login') }}"><img src="../static/imgs/seta.png" id="seta_icone" alt="seta_icone"></a>
             </div>
+
             <div class="banner2">
                 <h1>Bem Vindo!</h1>
                 <img src="../static/imgs/seguranca-trab 1.png" id="seguranca" alt="seguranca">
             </div>
+            
         </main>
+        </div>
 </body>
-<footer>
-    <div>
-        <img src="../static/imgs/acessibilidade.png" id="acessibilidade" alt="acessibilidade">
-    </div>
-</footer>
 </html>
