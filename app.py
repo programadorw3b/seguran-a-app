@@ -59,7 +59,7 @@ def inicializar_banco():
             CREATE TABLE IF NOT EXISTS psicologos(
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 nome TEXT NOT NULL,
-                cro INTEGER UNIQUE NOT NULL,
+                crp TEXT UNIQUE NOT NULL,
                 imagem TEXT,
                 celular INTEGER,
                 email TEXT UNIQUE NOT NULL,
@@ -74,6 +74,7 @@ def inicializar_banco():
                 prontuario TEXT,
                 paciente_id INTEGER NOT NULL,
                 psicologo_id INTEGER NOT NULL,
+                ocupada INTEGER DEFAULT 0,
                 FOREIGN KEY (paciente_id) REFERENCES usuarios (id),
                 FOREIGN KEY (psicologo_id) REFERENCES psicologos (id)
             );
@@ -159,6 +160,26 @@ def cadastro():
             return render_template('register.html')
     return render_template('register.html')
 
+#Rota para cadastro
+@app.route('/register_psi', methods=['GET','POST'])
+def register_psi():
+    if request.method == 'POST':
+        nome = request.form['nome']
+        crp = request.form['crp']
+        email = request.form['email'].lower()
+        senha = request.form['senha']
+        senha_segura = generate_password_hash(senha)
+        db = get_db()
+        try:
+            db.execute('INSERT INTO psicologos (nome, crp, email, senha) VALUES (?, ?, ?, ?)', (nome, crp, email, senha_segura))
+            db.commit()
+            flash('Usuário cadastrado com sucesso!!!')
+            return redirect(url_for('index'))
+        except sqlite3.IntegrityError:
+            flash('E-mail já cadastrado!')
+            return render_template('register_psi.html')
+    return render_template('register_psi.html')
+
 #Rota para login
 @app.route('/login', methods=['GET','POST'])
 def login():
@@ -176,6 +197,28 @@ def login():
             return render_template('login.html')
     return render_template('login.html')
 
+@app.route('/edit_user', methods=['GET','POST'])
+def edit_user():
+    if 'usuario_id' not in session:
+        flash('Logue-se para continuar!')
+        return redirect(url_for('index'))
+    db = get_db()
+    usuario = db.execute('SELECT * FROM usuarios WHERE id=?', (session['usuario_id'],)).fetchone()
+    if request.method == 'POST':
+        nome = request.form['nome']
+        celular = request.form['celular']
+        email = request.form['email']
+        if not celular:
+            celular = None
+        try:
+                db.execute('UPDATE usuarios SET nome=?, celular=?, email=? WHERE id=?', (nome, celular, email, session['usuario_id']))
+                db.commit()
+                flash('Usuário alterado com sucesso!!!')
+                return redirect(url_for('edit_user'))
+        except sqlite3.IntegrityError:
+                flash('Usuário já cadastrado')
+                return render_template('edit_user.html')
+    return render_template('edit_user.html', usuario=usuario)
 
 #Rota questionary
 @app.route('/questionario',methods=['GET','POST'])
