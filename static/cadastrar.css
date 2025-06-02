@@ -10,6 +10,13 @@
     font-style: normal;
 }
 
+.container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 90vh;
+}
+
 body{
     background-color: #EEEEEE;
     color: black;
@@ -19,58 +26,60 @@ body{
 
 header{
     background-color: #008000;
-    height: 20px;
-    width: 1920px;
-    position: absolute;
-    top: 0px;
-    left: 0px;
+    height: 2vh;
+    width: 102.58%;
+    position: relative;
+    top: -2.3vh;
+    left: -1.5vw;
+}
+
+.banner1, .banner2 {
+    height: 71.4vh;
 }
 
 .banner1{
     background-color: #FFFFFF;
-    width: 730px;
-    max-width: 730px;
-    max-height: 683px;
-    height: 683px;
+    width: 40%;
     border-radius: 25px;
-    position: absolute;
-    top: 155px;
-    left: 240px;
+    left: 11.6vw;
+    display: flex center;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
 }
 
 .banner1 h1{
     font-size: 36px;
     color: #008000;
     font-weight: 400;
-    position: absolute;
-    top: 35px;
-    left: 130px;
+    position: relative;
+    top: -10vh;
+    right: 5vw;
 }
 
 .banner1 p{
     font-size: 30px;
     color: #FFA63D;
     font-weight: 400;
-    position: absolute;
-    top: 98px;
-    left: 215px;
+    position: relative;
+    top: -8vh;
+    right: 5vw;
     
 }
 
 #logo{
-    position: absolute;
-    top: 0px;
-    left: 0px;
+    position: relative;
+    top: 0vh;
+    left: -16vw;
 }
 
 form{
     display: flex;
     flex-direction: column;
     gap: 30px;
-    width: 469px;
+    width: 26vw;
     position: relative;
-    top: 140px;
-    left: 60px;
+    bottom: 30vh;
+    left: 4vw;
 }
 
 input[type=text]{
@@ -141,78 +150,65 @@ label{
     cursor: pointer;
 }
 
-#usuario_icone1{
-    width: 27px;
-    height: 27px;
-    position: absolute;
-    top: 10px;
-    left: 15px;
+#usuario_icone{
+    width: 7%;
+    height: 4vh;
+    position: relative;
+    top: 27.5vh;
+    left: 0.6vw;
 }
 
-#usuario_icone2{
-    width: 27px;
-    height: 27px;
-    position: absolute;
-    top: 90px;
-    left: 15px;
+#celular_icone{
+    width: 5%;
+    height: 4vh;
+    position: relative;
+    top: 28.8vh;
+    left: 0.8vw;
 }
 
 #email_icone{
     width: 34px;
     height: 33px;
-    position: absolute;
-    top: 166px;
-    left: 11px;
+    position: relative;
+    top: 30.2vh;
+    left: 0.6vw;
 }
 
 #cadeado_icone{
     width: 28px;
     height: 29px;
-    position: absolute;
-    bottom: 11px;
-    left: 13px;
-}
-
-#acessibilidade{
-    width: 80.4px;
-    height: 67px;
-    position: absolute;
-    top: 350px;
-    right: 0px;
+    position: relative;
+    top: 31.8vh;
+    left: 0.6vw;
 }
 
 .banner2{
     background-color: #008000;
-    width: 715px;
-    max-width: 715px;
-    max-height: 683px;
-    height: 683px;
+    width: 40%;
     border-top-right-radius: 25px;
     border-bottom-right-radius: 25px;
-    position: absolute;
-    top: 155px;
-    right: 250px;
 }
 
 .banner2 h1{
     font-size: 48px;
     font-weight: 800;
-    position: absolute;
-    top: 80px;
-    left: 236px;
+    position: relative;
+    top: 4vh;
+    right: -1vw;
     color: #FFFFFF;
 }
 
-#seguranca{
-    justify-items: center;
-    margin-top: 200px;
+.banner2 img{
+    position: relative;
+    top: 15vh;
 }
 
 #seta_icone{
-    width: 70px;
-    height: 70px;
-    position: absolute;
-    bottom: -245px;
+    width: auto;
+    height: 7vh;
+    position: relative;
+    top: -20vh;
+    right: 16vw;
 }
 
 #seta_icone:hover{
