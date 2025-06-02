@@ -74,7 +74,6 @@ def inicializar_banco():
                 prontuario TEXT,
                 paciente_id INTEGER NOT NULL,
                 psicologo_id INTEGER NOT NULL,
-                ocupada INTEGER DEFAULT 0,
                 FOREIGN KEY (paciente_id) REFERENCES usuarios (id),
                 FOREIGN KEY (psicologo_id) REFERENCES psicologos (id)
             );
@@ -137,11 +136,13 @@ def senha_cod(email,codigo):
 # Rotas
 
 #Rota index
+
 @app.route('/')
 def index():
     return render_template('index.html')
 
 #Rota para cadastro
+
 @app.route('/cadastro', methods=['GET','POST'])
 def cadastro():
     if request.method == 'POST':
@@ -160,27 +161,8 @@ def cadastro():
             return render_template('register.html')
     return render_template('register.html')
 
-#Rota para cadastro
-@app.route('/register_psi', methods=['GET','POST'])
-def register_psi():
-    if request.method == 'POST':
-        nome = request.form['nome']
-        crp = request.form['crp']
-        email = request.form['email'].lower()
-        senha = request.form['senha']
-        senha_segura = generate_password_hash(senha)
-        db = get_db()
-        try:
-            db.execute('INSERT INTO psicologos (nome, crp, email, senha) VALUES (?, ?, ?, ?)', (nome, crp, email, senha_segura))
-            db.commit()
-            flash('Usuário cadastrado com sucesso!!!')
-            return redirect(url_for('index'))
-        except sqlite3.IntegrityError:
-            flash('E-mail já cadastrado!')
-            return render_template('register_psi.html')
-    return render_template('register_psi.html')
-
 #Rota para login
+
 @app.route('/login', methods=['GET','POST'])
 def login():
     if request.method == 'POST':
@@ -197,30 +179,9 @@ def login():
             return render_template('login.html')
     return render_template('login.html')
 
-@app.route('/edit_user', methods=['GET','POST'])
-def edit_user():
-    if 'usuario_id' not in session:
-        flash('Logue-se para continuar!')
-        return redirect(url_for('index'))
-    db = get_db()
-    usuario = db.execute('SELECT * FROM usuarios WHERE id=?', (session['usuario_id'],)).fetchone()
-    if request.method == 'POST':
-        nome = request.form['nome']
-        celular = request.form['celular']
-        email = request.form['email']
-        if not celular:
-            celular = None
-        try:
-                db.execute('UPDATE usuarios SET nome=?, celular=?, email=? WHERE id=?', (nome, celular, email, session['usuario_id']))
-                db.commit()
-                flash('Usuário alterado com sucesso!!!')
-                return redirect(url_for('edit_user'))
-        except sqlite3.IntegrityError:
-                flash('Usuário já cadastrado')
-                return render_template('edit_user.html')
-    return render_template('edit_user.html', usuario=usuario)
 
 #Rota questionary
+
 @app.route('/questionario',methods=['GET','POST'])
 def questionary():
     if request.method == 'POST':
@@ -270,21 +231,25 @@ def feedback():
     return render_template('feedback.html')
 
 #Rota de relaxamento
+
 @app.route('/relax')
 def relax():
     return render_template('relax.html')
 
 #Rota dos termos
+
 @app.route('/userterms')
 def termos():
     return render_template('userterms.html')
 
 #Rota recomendações
+
 @app.route('/recomendations')
 def recomendation():
     return render_template('recomendations.html')
 
 #Rota esqueci senha
+
 @app.route('/password',methods=['GET','POST'])
 def password():
     if request.method == 'POST':
@@ -300,6 +265,7 @@ def password():
     return render_template('password.html')
 
 #Rota para nova senha
+
 @app.route('/password_recovery',methods=['GET','POST'])
 def password_recovery():
     if request.method == "POST":
@@ -323,9 +289,20 @@ def password_recovery():
             return "Código inválido ou expirado"
     return render_template('password_recovery.html') #Adicionar erro
 
+
+# rota de confirmação de senha
+
 @app.route('/password_confirm')
 def password_confirm():
     return render_template('password_confirm.html')
+
+# rota para agendar consulta
+
+@app.route('/agendar')
+def agendar():
+    db = get_db()
+    psicologos = db.execute('SELECT * FROM psicologos').fetchall()
+    return render_template('gestao.html',psicologos=psicologos)
 
 '''
 Funções puro html:
@@ -353,11 +330,16 @@ if __name__ == '__main__':
     with app.app_context():
         db = get_db()
         admin =  db.execute('SELECT * FROM usuarios where admin=1').fetchall()
-        if not admin:
+        psicologo = db.execute('SELECT * FROM psicologos').fetchall()
+        if not psicologo:
+            db.execute('INSERT INTO psicologos (nome,crp,email,senha) VALUES (?,?,?,?)',('teste','teste','teste@gmail.com','teste'))
+            db.commit()
+        ''' if not admin:
                 adm_nome = os.getenv("ADM_NOME")
                 adm_email = os.getenv("ADM_EMAIL")
                 adm_senha = os.getenv("ADM_SENHA")
                 senha_adm = generate_password_hash(adm_senha)
                 db.execute('INSERT INTO usuarios (nome, email, senha, admin) VALUES (?, ?, ?, 1)', (adm_nome, adm_email, senha_adm))
                 db.commit()
+        '''
     app.run(debug=True)
