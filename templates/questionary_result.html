@@ -37,9 +37,12 @@
     <main>
         <div class="resultado">
             <h2>Resultado do questionário:</h2>
-            <ul>
             {% for item in resultado %}
-                <li>{{ item }}</li>
+                <h4>{{ item }}</h4>
+            {% endfor %}
+            <ul>
+            {% for r in recomendacoes %}
+                <li>{{ r }}</li>
             {% endfor %}
             </ul>
         </div>
