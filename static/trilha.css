@@ -4,6 +4,10 @@
     font-family: Arial,sans-serif;
 }
 
+body{
+    background-color: #F4FFF4;
+}
+
 .verde{
     background-color: #008000;
     height: 1px;
@@ -25,6 +29,10 @@ header{
 
 li{
     list-style: none;
+}
+
+li:hover{
+    transform: scale(1.1);
 }
 
 li a{
@@ -55,6 +63,7 @@ ul{
     width: max-content;
     padding: 10px;
     margin-top: 40px;
+    color: #064F06;
 }
 
 main{

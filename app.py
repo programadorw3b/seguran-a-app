@@ -4,6 +4,12 @@ import sqlite3
 from flask import Flask, render_template, request, redirect, url_for, session, flash, g
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
+import random
+import smtplib # enviar email
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from contextlib import contextmanager
+from datetime import datetime,timedelta
 load_dotenv()
 
 # inicio do app
@@ -44,14 +50,16 @@ def inicializar_banco():
                 email TEXT UNIQUE NOT NULL,
                 senha TEXT NOT NULL,
                 admin INTEGER DEFAULT 0,
-                rec_code DATETIME
+                rec_code INTEGER,
+                created DATETIME,
+                expired DATETIME
             );
         ''')
         db.execute('''
             CREATE TABLE IF NOT EXISTS psicologos(
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 nome TEXT NOT NULL,
-                cro INTEGER UNIQUE NOT NULL,
+                crp TEXT UNIQUE NOT NULL,
                 imagem TEXT,
                 celular INTEGER,
                 email TEXT UNIQUE NOT NULL,
@@ -80,15 +88,61 @@ def inicializar_banco():
         ''')
         db.commit()
 
+# Recuperação de senha
+
+#Gerar código
+def codigo(email):
+    codigo = random.randint(1000,9999)
+    db = get_db()
+    email_exists = db.execute('SELECT nome FROM usuarios WHERE email=?',(email,)).fetchone()
+    print(email_exists)
+    agora = datetime.now()
+    expirou = agora + timedelta(minutes=5)
+    db.execute('UPDATE usuarios SET rec_code=?,created=?,expired=? WHERE email=?',(codigo,agora,expirou,email))
+    db.commit()
+
+#Apagar código
+@app.before_request
+def apagar_codigo():
+    db = get_db()
+    agora = datetime.now()
+    db.execute('UPDATE usuarios SET rec_code=NULL, created=NULL, expired=NULL WHERE expired < ?',(agora,))
+    db.commit()
+
+#Enviar email
+def senha_cod(email,codigo):
+    remetente = os.getenv("REMETENTE") #adicionar remetente de email
+    remetente_senha = os.getenv("SENHA_REMETENTE") #adicionar senha do email do remetente
+    if email and codigo:
+        mensagem = MIMEMultipart()
+        mensagem['From'] = remetente
+        mensagem['To'] = email
+        mensagem['Subject'] = 'Código de recuperação de senha - MindConnect'
+        # corpo do email
+        db = get_db()
+        data = db.execute('SELECT * FROM usuarios WHERE email=?',(email,)).fetchone()
+        corpo = f"Olá {data[1]}, seu código de recuperação é o seguinte: {data[7]}, use-o logo pois ele irá expirar em 5 minutos."
+        mensagem.attach(MIMEText(corpo,'plain'))
+        try:
+            servidor_email = smtplib.SMTP('smtp.gmail.com',587)
+            servidor_email.starttls()
+            servidor_email.login(remetente,remetente_senha)
+            servidor_email.sendmail(remetente,email,mensagem.as_string())
+        except Exception as e:
+            print(f"Erro: {e}")
+        finally:
+            servidor_email.quit()
 
 # Rotas
 
 #Rota index
+
 @app.route('/')
 def index():
     return render_template('index.html')
 
 #Rota para cadastro
+
 @app.route('/cadastro', methods=['GET','POST'])
 def cadastro():
     if request.method == 'POST':
@@ -108,6 +162,7 @@ def cadastro():
     return render_template('register.html')
 
 #Rota para login
+
 @app.route('/login', methods=['GET','POST'])
 def login():
     if request.method == 'POST':
@@ -126,6 +181,7 @@ def login():
 
 
 #Rota questionary
+
 @app.route('/questionario',methods=['GET','POST'])
 def questionary():
     if request.method == 'POST':
@@ -136,17 +192,24 @@ def questionary():
         opcao_5 = int(request.form.get('relaxar'))
         total = opcao_1+opcao_2+opcao_3+opcao_4+opcao_5+6
         if total <= 2:
-            resultado = ["🔴 Alerta emocional", "Consulta com psicólogo online", "Áudio de primeiros socorros emocionais", "Registro de sentimentos", "Acesso a apoio confidencial e imediato"]
+            resultado = ["🔴 Alerta emocional 🔴"]
+            resultado_classe = "alerta"
+            recomendacoes = ["Consulta com psicólogo online", "Áudio de primeiros socorros emocionais", "Registro de sentimentos", "Acesso a apoio confidencial e imediato"]
             # aqui vai retornar uma mensagem de alerta de risco emocional
-            return render_template('questionary_result.html', resultado=resultado)
+            return render_template('questionary_result.html', resultado=resultado, recomendacoes=recomendacoes, resultado_classe=resultado_classe)
         elif total <= 4:
-            resultado = ["🟡 Atenção moderada", "Técnicas de relaxamento", "Meditação guiada", "Diário emocional", "Ative lembretes para pausas e autocuidado"]
+            resultado = ["🟡 Atenção moderada 🟡"]
+            resultado_classe = "moderado"
+            recomendacoes = ["Técnicas de relaxamento", "Meditação guiada", "Diário emocional", "Ative lembretes para pausas e autocuidado"]
             #aqui vai retornar uma mensagem de atenção moderada
-            return render_template('questionary_result.html', resultado=resultado)
+            return render_template('questionary_result.html', resultado=resultado, recomendacoes=recomendacoes, resultado_classe=resultado_classe)
         else:
-            resultado = ["🟢 Bem-estar alto" "Continue com suas práticas de autocuidado", "Explore novos conteúdos preventivos", "Mantenha hábito saudáveis", "Experimente metas semanais"]
+            resultado = ["🟢 Bem-estar alto 🟢"]
+            resultado_classe = "alto"
+            recomendacoes = ["Continue com suas práticas de autocuidado", "Explore novos conteúdos preventivos", "Mantenha hábito saudáveis", "Experimente metas semanais"]
+    
             #aqui vai retornar uma mensagem de bem-estar alto
-            return render_template('questionary_result.html', resultado=resultado)
+            return render_template('questionary_result.html', resultado=resultado, recomendacoes=recomendacoes, resultado_classe=resultado_classe)
     return render_template('questionary.html')
 
 # rota para norms
@@ -172,21 +235,91 @@ def feedback():
     return render_template('feedback.html')
 
 #Rota de relaxamento
+
 @app.route('/relax')
 def relax():
     return render_template('relax.html')
+
+#Rota dos termos
 
 @app.route('/userterms')
 def termos():
     return render_template('userterms.html')
 
-'''
-Funções puro html:
-
+#Rota recomendações
 
 @app.route('/recomendations')
 def recomendation():
     return render_template('recomendations.html')
+
+#Rota esqueci senha
+
+@app.route('/password',methods=['GET','POST'])
+def password():
+    if request.method == 'POST':
+        email = request.form['email']
+        session['email'] = email
+        codigo(email)
+        db = get_db()
+        cod = db.execute('SELECT rec_code FROM usuarios WHERE email=?',(email,))
+        if not cod:
+            return "Código inexistente"
+        senha_cod(email,cod)
+        return redirect(url_for('password_recovery'))
+    return render_template('password.html')
+
+#Rota para nova senha
+
+@app.route('/password_recovery',methods=['GET','POST'])
+def password_recovery():
+    if request.method == "POST":
+        codigo = int(request.form.get('codigo'))
+        senha = request.form.get('password')
+        senha2 = request.form.get('password2')
+        email = session.get('email')
+        print(email)
+        db = get_db()
+        cod = db.execute('SELECT * FROM usuarios WHERE email=?',(email,)).fetchone()
+        print(codigo,cod)
+        if codigo == cod[7]:
+            if senha == senha2:
+                senha_segura = generate_password_hash(senha)
+                db.execute('UPDATE usuarios SET senha=?',(senha_segura,))
+                session.clear()
+                return redirect(url_for('password_confirm'))
+            else:
+                return "Senha 1 diferente da senha 2"
+        else:
+            return "Código inválido ou expirado"
+    return render_template('password_recovery.html') #Adicionar erro
+
+
+# rota de confirmação de senha
+
+@app.route('/password_confirm')
+def password_confirm():
+    return render_template('password_confirm.html')
+
+# rota para agendar consulta
+
+@app.route('/agendar')
+def agendar():
+    db = get_db()
+    psicologos = db.execute('SELECT * FROM psicologos').fetchall()
+    return render_template('gestao.html',psicologos=psicologos)
+
+'''
+Funções puro html:
+
+
+.env:
+SECRET_KEY=
+ADM_NOME=
+ADM_EMAIL=
+ADM=SENHA=
+REMETENTE=
+SENHA_REMETENTE=
+
 '''
 
 @app.route('/logout')
@@ -201,11 +334,16 @@ if __name__ == '__main__':
     with app.app_context():
         db = get_db()
         admin =  db.execute('SELECT * FROM usuarios where admin=1').fetchall()
-        if not admin:
+        psicologo = db.execute('SELECT * FROM psicologos').fetchall()
+        if not psicologo:
+            db.execute('INSERT INTO psicologos (nome,crp,email,senha) VALUES (?,?,?,?)',('teste','teste','teste@gmail.com','teste'))
+            db.commit()
+        ''' if not admin:
                 adm_nome = os.getenv("ADM_NOME")
                 adm_email = os.getenv("ADM_EMAIL")
                 adm_senha = os.getenv("ADM_SENHA")
                 senha_adm = generate_password_hash(adm_senha)
                 db.execute('INSERT INTO usuarios (nome, email, senha, admin) VALUES (?, ?, ?, 1)', (adm_nome, adm_email, senha_adm))
                 db.commit()
+        '''
     app.run(debug=True)

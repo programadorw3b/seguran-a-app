@@ -23,9 +23,9 @@
 
     <nav id="nav-menu">
       <ul>
-        <li><a href="">Registrar Sentimentos</a></li>
+        <li><a href="{{ url_for('recomendation') }}">Recomendações</a></li>
         <li><a href="{{ url_for('relax') }}">Dicas de Relaxamento</a></li>
-        <li><a href="">Agendar consulta</a></li>
+        <li><a href="{{ url_for('agendar') }}">Agendar consulta</a></li>
       </ul>
     </nav>
 
@@ -42,6 +42,7 @@
       {% else %}
         <p>Você não é admin!!!</p>
         <button>Não apagar o SITE</button>
+        <a href="{{ url_for('logout') }}">LOGOUT</a>
       {% endif %}
     {% endif %}
 
