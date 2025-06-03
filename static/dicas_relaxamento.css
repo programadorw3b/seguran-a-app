@@ -8,7 +8,7 @@
     font-optical-sizing: auto;
     font-weight: 400;
     font-style: normal;
-    background-color: #EEEEEE;
+    background-color: #F4FFF4;
 }
 
 header h2{
@@ -72,7 +72,6 @@ header h2{
     background-color: transparent;
     font-size: 17px;
     margin-top: 50px;
-    color: #FFFFFF;
-    border-bottom: 1px solid #FFFFFF;
+    color: #FFA63D;
     text-decoration: none;
 }

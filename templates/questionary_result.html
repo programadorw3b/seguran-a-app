@@ -34,17 +34,19 @@
         <hr class="verde">
     </header>
     <!--Corpo-->
-    <main>
+    <main class="container">
         <div class="resultado">
-            <h2>Resultado do questionário:</h2>
+            <div class="resultado_branco">
+            <h1>Resultado do questionário</h1><br>
             {% for item in resultado %}
-                <h4>{{ item }}</h4>
+                <h2 class="{{ resultado_classe }}">{{ item }}</h2><br><br>
             {% endfor %}
             <ul>
             {% for r in recomendacoes %}
-                <li>{{ r }}</li>
+                <li><h3>{{ r }}</h3></li><br><br><br>
             {% endfor %}
             </ul>
+            </div>
         </div>
     </main>
 </body>

@@ -192,20 +192,24 @@ def questionary():
         opcao_5 = int(request.form.get('relaxar'))
         total = opcao_1+opcao_2+opcao_3+opcao_4+opcao_5+6
         if total <= 2:
-            resultado = ["🔴 Alerta emocional"]
+            resultado = ["🔴 Alerta emocional 🔴"]
+            resultado_classe = "alerta"
             recomendacoes = ["Consulta com psicólogo online", "Áudio de primeiros socorros emocionais", "Registro de sentimentos", "Acesso a apoio confidencial e imediato"]
             # aqui vai retornar uma mensagem de alerta de risco emocional
-            return render_template('questionary_result.html', resultado=resultado, recomendacoes=recomendacoes)
+            return render_template('questionary_result.html', resultado=resultado, recomendacoes=recomendacoes, resultado_classe=resultado_classe)
         elif total <= 4:
-            resultado = ["🟡 Atenção moderada"]
+            resultado = ["🟡 Atenção moderada 🟡"]
+            resultado_classe = "moderado"
             recomendacoes = ["Técnicas de relaxamento", "Meditação guiada", "Diário emocional", "Ative lembretes para pausas e autocuidado"]
             #aqui vai retornar uma mensagem de atenção moderada
-            return render_template('questionary_result.html', resultado=resultado, recomendacoes=recomendacoes)
+            return render_template('questionary_result.html', resultado=resultado, recomendacoes=recomendacoes, resultado_classe=resultado_classe)
         else:
-            resultado = ["🟢 Bem-estar alto"]
+            resultado = ["🟢 Bem-estar alto 🟢"]
+            resultado_classe = "alto"
             recomendacoes = ["Continue com suas práticas de autocuidado", "Explore novos conteúdos preventivos", "Mantenha hábito saudáveis", "Experimente metas semanais"]
+    
             #aqui vai retornar uma mensagem de bem-estar alto
-            return render_template('questionary_result.html', resultado=resultado, recomendacoes=recomendacoes)
+            return render_template('questionary_result.html', resultado=resultado, recomendacoes=recomendacoes, resultado_classe=resultado_classe)
     return render_template('questionary.html')
 
 # rota para norms
