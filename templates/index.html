@@ -6,6 +6,7 @@
   <title>Mindconnect</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="{{ url_for('static',filename='index.css') }}">
+  <link rel="stylesheet" href="../static/index.css">
 </head>
 
 <body>
@@ -16,7 +17,6 @@
       <img src="../static/imgs/logo2.png" alt="Logo Mindconnect"/>
     </div>
 
-    <!-- Ícone do menu mobile -->
     <div class="menu-toggle" onclick="toggleMenu()">
       <i class="fas fa-bars"></i>
     </div>
@@ -30,26 +30,28 @@
     </nav>
 
     <div class="acoes-header">
-
-
-<!-- FUNÇÃO TEMPORÁRIA PARA VERIFICAR SE O USUÁRIO LOGADO É ADMNISTRADOR OU NÃO, APAGUE APÓS ELA NÃO SER MAIS NECESSÁRIA -->
-
-    {% if session %}
-      {% if session['user_admin'] == 1 %}
-        <p>Você é admin!!!</p>
-        <button>APAGAR O SITE</button>
-        <a href="{{ url_for('logout') }}">LOGOUT</a>
-      {% else %}
-        <p>Você não é admin!!!</p>
-        <button>Não apagar o SITE</button>
-        <a href="{{ url_for('logout') }}">LOGOUT</a>
+      {% if session %}
+        {% if session['user_admin'] == 1 %}
+          <p>Você é admin!!!</p>
+          <button>APAGAR O SITE</button>
+          <a href="{{ url_for('logout') }}">LOGOUT</a>
+        {% else %}
+          <p>Você não é admin!!!</p>
+          <button>Não apagar o SITE</button>
+          <a href="{{ url_for('logout') }}">LOGOUT</a>
+        {% endif %}
       {% endif %}
-    {% endif %}
-
-<!-- FUNÇÃO TEMPORÁRIA PARA VERIFICAR SE O USUÁRIO LOGADO É ADMNISTRADOR OU NÃO, APAGUE APÓS ELA NÃO SER MAIS NECESSÁRIA -->
 
       <a href="{{ url_for('questionary') }}"><button class="btn-destaque">Trilha do Bem Estar</button></a>
-      <a href="{{ url_for('login') }}" class="login-icon"><i class="fas fa-user-circle"></i></a>
+      
+      <!-- Ícone do usuário com dropdown -->
+      <a href="javascript:void(0);" class="login-icon" onclick="toggleUserMenu()">
+        <i class="fas fa-user-circle"></i>
+      </a>
+      <div class="menu-usuario" id="menuUsuario">
+        <a href="{{ url_for('login') }}">Login</a>
+        <a href="{{ url_for('register') }}">Cadastro</a>
+      </div>
     </div>
   </header>
 
@@ -77,7 +79,7 @@
         </div>
       </a>
 
-      <a href="" class="box-link">
+      <a href="#" class="box-link">
         <div class="box">
           <p class="titulo-box">Apoio Psicológico</p>
           <i class="fas fa-brain fa-4x icone-box"></i>
@@ -154,6 +156,22 @@
     function toggleMenu() {
       document.getElementById("nav-menu").classList.toggle("show");
     }
+
+    // Mostrar/ocultar menu do usuário
+    function toggleUserMenu() {
+      const menu = document.getElementById("menuUsuario");
+      menu.style.display = (menu.style.display === "block") ? "none" : "block";
+    }
+
+    // Fechar menu se clicar fora
+    window.addEventListener("click", function(e) {
+      const menu = document.getElementById("menuUsuario");
+      const icon = document.querySelector(".login-icon");
+
+      if (!icon.contains(e.target) && !menu.contains(e.target)) {
+        menu.style.display = "none";
+      }
+    });
   </script>
 </body>
 </html>
