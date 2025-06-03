@@ -125,7 +125,7 @@ input::placeholder {
     font-size: 20px;
     border-radius: 9%;
     cursor: pointer;
-    transform: translate(10vw, 60vh);
+    transform: translate(22vw, 60vh);
 }
 
 #enviar:hover {
@@ -145,8 +145,7 @@ input::placeholder {
     color: rgb(0, 0, 0);
     justify-content: center;  
     align-items: center;      
-    width: 330px;
-    transform: translate(24.7vw, 50vh);
+    transform: translate(30vw, 50vh);
 }
 
 #passwordicon2{
@@ -159,7 +158,6 @@ input::placeholder {
     color: rgb(0, 0, 0);
     justify-content: center;  
     align-items: center;      
-    width: 330px;
     transform: translate(42vw, 39vh);
 }
 
