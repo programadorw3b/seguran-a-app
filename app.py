@@ -1,7 +1,8 @@
 import os
 import re
 import sqlite3
-from flask import Flask, render_template, request, redirect, url_for, session, flash, g
+from flask import Flask, render_template, request, redirect, url_for, session, flash, g, jsonify
+import json
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
 import random
@@ -63,7 +64,8 @@ def inicializar_banco():
                 imagem TEXT,
                 celular INTEGER,
                 email TEXT UNIQUE NOT NULL,
-                senha TEXT NOT NULL
+                senha TEXT NOT NULL,
+                horarios TEXT NOT NULL
             );
         ''')
         db.execute('''
@@ -86,11 +88,21 @@ def inicializar_banco():
                 mensagem TEXT NOT NULL
             );
         ''')
+        db.execute('''
+            CREATE TABLE IF NOT EXISTS ocupado(
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    nome TEXT NOT NULL,
+                    data DATA NOT NULL,
+                    horario TEXT NOT NULL,
+                    FOREIGN KEY (nome) REFERENCES psicologos (nome)
+                    );
+                ''')
         db.commit()
 
 # Recuperação de senha
 
 #Gerar código
+
 def codigo(email):
     codigo = random.randint(1000,9999)
     db = get_db()
@@ -102,6 +114,7 @@ def codigo(email):
     db.commit()
 
 #Apagar código
+
 @app.before_request
 def apagar_codigo():
     db = get_db()
@@ -110,6 +123,7 @@ def apagar_codigo():
     db.commit()
 
 #Enviar email
+
 def senha_cod(email,codigo):
     remetente = os.getenv("REMETENTE") #adicionar remetente de email
     remetente_senha = os.getenv("SENHA_REMETENTE") #adicionar senha do email do remetente
@@ -284,11 +298,10 @@ def password_recovery():
                 session.clear()
                 return redirect(url_for('password_confirm'))
             else:
-                return "Senha 1 diferente da senha 2"
+                return flash("Senhas diferentes")
         else:
-            return "Código inválido ou expirado"
+            return flash("Código inválido ou expirado")
     return render_template('password_recovery.html') #Adicionar erro
-
 
 # rota de confirmação de senha
 
@@ -298,15 +311,89 @@ def password_confirm():
 
 # rota para agendar consulta
 
-@app.route('/agendar')
+@app.route('/agendar',methods=['GET','POST'])
 def agendar():
     db = get_db()
     psicologos = db.execute('SELECT * FROM psicologos').fetchall()
+    if request.method == 'POST':
+        nome = request.form.get('psicologo')
+        data_str = request.form.get('select_date')
+        horario_str = request.form.get('horario')
+        print(nome)
+        print(data_str)
+        print(horario_str)
+        if nome and data_str and horario_str:
+            print(nome,data_str,horario_str)
+            hora_inicio = horario_str.split(' - ')[0]
+
+            data_horario_str = f"{data_str} {hora_inicio}"
+            data_horario_dt = datetime.strptime(data_horario_str,'%Y-%m-%d %H:%M')
+
+            if data_horario_dt > datetime.now():
+                db.execute('INSERT INTO ocupado (nome,data,horario) VALUES (?,?,?)',(nome,data_str,horario_str))
+                db.commit()
+                return redirect(url_for('index'))
     return render_template('gestao.html',psicologos=psicologos)
 
-'''
-Funções puro html:
+@app.route('/buscar_por_data')
+def buscar_por_data():
+    data = request.args.get('data')
+    psicologo = request.args.get('psicologo')
+    if not data or not psicologo:
+        return jsonify([])
+    # horarios disponiveis do psicologo
+    db = get_db()
+    resultado = db.execute('SELECT horarios FROM psicologos WHERE nome=?',(psicologo,)).fetchone()
+    if not resultado:
+        return jsonify([])
+    try:
+        horarios = json.loads(resultado['horarios'])
+    except json.JSONDecodeError:
+        return jsonify([])
+    # horarios que o psicologo tá ocupado
+    ocupado = db.execute('SELECT horario FROM ocupado WHERE nome=? AND data=?',(psicologo,data)).fetchall()
+    horarios_ocupado = [row['horario'] for row in ocupado]
+    # horarios disponiveis
+    horarios_disponiveis = [h for h in horarios if h not in horarios_ocupado]
+    return jsonify(horarios_disponiveis)
 
+
+# rota para registrar psicologo
+
+@app.route('/register_psi',methods=['GET','POST'])
+def register_psi():
+    if request.method == 'POST':
+        nome = request.form.get('nome')
+        crp = request.form.get('crp')
+        email = request.form.get('email')
+        senha = request.form.get('senha')
+        senha_segura = generate_password_hash(senha)
+        inicio_str = request.form.get('inicio')
+        final_str = request.form.get('final')
+        intervalo_m = int(request.form.get('intervalo'))
+
+        inicio = datetime.strptime(inicio_str,'%H:%M')
+        final = datetime.strptime(final_str,'%H:%M')
+        intervalo = timedelta(minutes=intervalo_m)
+        print(inicio)
+        print(intervalo)
+        print(final)
+
+        horarios = []
+
+        while inicio + intervalo <= final:
+            proximo = inicio + intervalo
+            horarios.append(f"{inicio.strftime('%H:%M')} - {proximo.strftime('%H:%M')}")
+            inicio = proximo
+        
+        horarios_json = json.dumps(horarios)
+        db = get_db()
+        db.execute('INSERT INTO psicologos (nome,crp,email,senha,horarios) VALUES (?,?,?,?,?)',(nome,crp,email,senha_segura,horarios_json))
+        db.commit()
+        return redirect(url_for('index'))
+    return render_template('register_psi.html')
+
+'''
 
 .env:
 SECRET_KEY=
@@ -330,16 +417,11 @@ if __name__ == '__main__':
     with app.app_context():
         db = get_db()
         admin =  db.execute('SELECT * FROM usuarios where admin=1').fetchall()
-        psicologo = db.execute('SELECT * FROM psicologos').fetchall()
-        if not psicologo:
-            db.execute('INSERT INTO psicologos (nome,crp,email,senha) VALUES (?,?,?,?)',('teste','teste','teste@gmail.com','teste'))
-            db.commit()
-        ''' if not admin:
+        if not admin:
                 adm_nome = os.getenv("ADM_NOME")
                 adm_email = os.getenv("ADM_EMAIL")
                 adm_senha = os.getenv("ADM_SENHA")
                 senha_adm = generate_password_hash(adm_senha)
                 db.execute('INSERT INTO usuarios (nome, email, senha, admin) VALUES (?, ?, ?, 1)', (adm_nome, adm_email, senha_adm))
                 db.commit()
-        '''
     app.run(debug=True)
