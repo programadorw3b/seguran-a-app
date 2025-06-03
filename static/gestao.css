@@ -28,25 +28,20 @@ body {
 .container {
     width: 100%;
     max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
 }
 
 .logo-image{
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    height: 10px;
+    width: 120px;
 }
 
 .header {
     background:none;
     color: var(--dark);
-    padding: 20px 0;
     text-align: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
-
-
 
 .header h1 {
     font-size: 1.5rem;
@@ -54,38 +49,37 @@ body {
 }
 
 .main-content {
-    padding: 40px 0;
-}
-
-.appointment-section {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 30px;
-    justify-content: center;
+    padding: 10px 0;
 }
 
 .schedule-form{
     display: flex;
     justify-content: space-around;
     width: fit-content;
+    gap: 50px;
 }
 
 .schedule-card{
     height: fit-content;
+    margin-left: 7%;
+    border: #333333 solid 1px;
 }
 
 .psicologos{
     display: grid;
     grid-template-columns: repeat(3,1fr);
     gap: 20px;
+    overflow-y: auto;
+    scrollbar-color: white green;
+    max-height: 400px;
+    padding: 20px;
 }
 
 .doctor-card, .schedule-card {
     background: var(--white);
     border-radius: var(--border-radius);
     box-shadow: var(--shadow);
-    padding: 30px;
-    border: 1px solid black;
+    padding: 10px;
 }
 
 .doctor-card {
@@ -134,11 +128,6 @@ body {
     height: 2px;
     background-color: var(--medium-gray);
     margin: 15px auto;
-}
-
-.bio {
-    font-size: 0.95rem;
-    line-height: 1.7;
 }
 
 .schedule-card h3 {
@@ -224,6 +213,20 @@ body {
 .submit-btn:hover {
     background-color: var(--secondary-dark);
     transform: translateY(-2px);
+}
+
+label{
+    transition-duration: .5s;
+}
+
+
+label:hover{
+    transform: scale(1.05);
+}
+
+.select_psi:checked + label{
+    transform: scale(1.1);
+    border: #2E7D32 3px solid;
 }
 
 @media (max-width: 768px) {

@@ -52,11 +52,20 @@ nav ul li a {
   color: var(--verde-principal);
   text-decoration: none;
   font-weight: bold;
+  transition-duration: .5s;
 }
 
 /* Efeito de hover no menu */
 nav ul li a:hover {
   color: var(--laranja-destaque);
+}
+
+nav ul li{
+  transition-duration: .5s;
+}
+
+nav ul li:hover{
+  transform: scale(1.1);
 }
 
 /* Estilos para ações do header */
