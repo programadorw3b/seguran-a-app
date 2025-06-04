@@ -77,8 +77,8 @@ def inicializar_banco():
         db.execute('''
             CREATE TABLE IF NOT EXISTS consultas(
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                tipo TEXT NOT NULL,
                 data TEXT NOT NULL,
+                horario TEXT NOT NULL,
                 prontuario TEXT,
                 paciente_id INTEGER NOT NULL,
                 psicologo_id INTEGER NOT NULL,
@@ -251,6 +251,8 @@ def norms():
 
 @app.route('/feedback',methods=['GET','POST'])
 def feedback():
+    if not session:
+        return redirect(url_for('login'))
     if request.method == 'POST':
         tipo = request.form.get('tipo')
         nome = request.form.get('nome')
@@ -330,17 +332,15 @@ def password_confirm():
 
 @app.route('/agendar',methods=['GET','POST'])
 def agendar():
+    if not session:
+        return redirect(url_for('login'))
     db = get_db()
     psicologos = db.execute('SELECT * FROM psicologos').fetchall()
     if request.method == 'POST':
         nome = request.form.get('psicologo')
         data_str = request.form.get('select_date')
         horario_str = request.form.get('horario')
-        print(nome)
-        print(data_str)
-        print(horario_str)
         if nome and data_str and horario_str:
-            print(nome,data_str,horario_str)
             hora_inicio = horario_str.split(' - ')[0]
 
             data_horario_str = f"{data_str} {hora_inicio}"
@@ -348,6 +348,7 @@ def agendar():
 
             if data_horario_dt > datetime.now():
                 db.execute('INSERT INTO ocupado (nome,data,horario) VALUES (?,?,?)',(nome,data_str,horario_str))
+                db.execute('INSERT INTO consultas (data,horario,paciente_id,psicologo_id) VALUES (?,?,?,?)',(data_str,horario_str,session['usuario_id'],nome))
                 db.commit()
                 return redirect(url_for('index'))
     return render_template('gestao.html',psicologos=psicologos)
@@ -497,7 +498,17 @@ def edit_user():
 
 @app.route('/consultas')
 def consultas():
-    return render_template('checkup.html')
+    if not session:
+        return redirect(url_for('login'))
+    if session['usuario_id']:
+        db = get_db()
+        consultas_marcadas = db.execute('SELECT * FROM consultas WHERE paciente_id=?',(session['usuario_id'],)).fetchall()
+        psicologos = []
+        for consulta in consultas_marcadas:
+            psicologo = db.execute('SELECT * FROM psicologos WHERE nome=?',(consulta['psicologo_id'],)).fetchone()
+            psicologos.append(psicologo)
+        return render_template('check_up.html',consultas_marcadas=consultas_marcadas,psicologos=psicologos)
+    return render_template('check_up.html')
 
 '''
 .env:

@@ -1,0 +1,132 @@
+:root {
+    --primary-color: #2E7D32;
+    --primary-light: #E8F5E9;
+    --primary-dark: #1B5E20;
+    --secondary-color: #FFA000;
+    --secondary-dark: #FF8F00;
+    --text-color: #333333;
+    --light-gray: #f5f5f5;
+    --medium-gray: #e0e0e0;
+    --white: #ffffff;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --border-radius: 8px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    color: var(--text-color);
+    line-height: 1.6;
+    background-color: #f9f9f9;
+}
+
+.logo-image{
+    width: 120px;
+}
+
+.header {
+    background:none;
+    color: var(--dark);
+    text-align: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.main-content {
+    padding: 10px 0;
+    display: grid;
+    grid-template-columns: repeat(5,1fr);
+    margin: 2%;
+    justify-items: center;
+    grid-row-gap: 1%;
+}
+
+
+.psicologos{
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 20px;
+    overflow-y: auto;
+    scrollbar-color: white green;
+    max-height: 400px;
+    padding: 20px;
+}
+
+.doctor-card{
+    background: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    padding: 10px;
+}
+
+.doctor-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: fit-content;
+    margin-top: 40px;
+}
+
+.doctor-image {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid var(--primary-light);
+    margin-bottom: 20px;
+}
+
+.doctor-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.doctor-info h2 {
+    color: var(--primary-dark);
+    margin-bottom: 5px;
+    font-size: 1.4rem;
+}
+
+.specialty {
+    color: var(--primary-color);
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.license {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+}
+
+.divider {
+    width: 50px;
+    height: 2px;
+    background-color: var(--medium-gray);
+    margin: 15px auto;
+}
+
+
+@media (max-width: 768px) {
+    .appointment-section {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .doctor-card {
+        max-width: 100%;
+    }
+}

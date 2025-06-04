@@ -25,7 +25,7 @@
       <ul>
         <li><a href="{{ url_for('recomendation') }}">Recomendações</a></li>
         <li><a href="{{ url_for('relax') }}">Dicas de Relaxamento</a></li>
-        <li><a href="{{ url_for('index') }}">Ver consultas</a></li> <!--Aparecer para usuario-->
+        <li><a href="{{ url_for('consultas') }}">Ver consultas</a></li> <!--Aparecer para usuario-->
       </ul>
     </nav>
 
@@ -34,15 +34,13 @@
         <a href="{{ url_for('login') }}" class="login-icon"><i class="fas fa-user-circle"></i></a>
       {% elif session['user_admin']==1%}
         <a href="{{ url_for('questionary') }}"><button class="btn-destaque">Trilha do Bem Estar</button></a>
-        <!-- colocar função de popup aqui -->
         <a onclick="mostrar(this)" class="login-icon"><i class="fas fa-user-circle"></i></a>
         <div class="popup">
-          <a href="{{ url_for('register_psi') }}">REGISTRAR PSICOLOGO</a> <!-- vai ficar dentro do popup-->
+          <a href="{{ url_for('register_psi') }}">REGISTRAR PSICOLOGO</a>
           <a href="{{ url_for('logout') }}">LOGOUT</a>
         </div>
       {% elif session['usuario_id'] %}
         <a href="{{ url_for('questionary') }}"><button class="btn-destaque">Trilha do Bem Estar</button></a>
-        <!-- colocar função de popup aqui -->
         <a onclick="mostrar(this)" class="login-icon"><i class="fas fa-user-circle"></i></a>
         <div class="popup">
           <a href="{{ url_for('edit_user') }}">Meus dados</a>
@@ -50,7 +48,6 @@
         </div>
       {% elif session['psicologo_id']%}
         <a href="{{ url_for('questionary') }}"><button class="btn-destaque">Trilha do Bem Estar</button></a>
-        <!-- colocar função de popup aqui -->
         <a onclick="mostrar(this)" class="login-icon"><i class="fas fa-user-circle"></i></a>
         <div class="popup">
           <a href="{{ url_for('edit_user') }}">Meus dados</a>

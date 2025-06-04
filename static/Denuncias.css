@@ -72,9 +72,13 @@ header {
   flex: 1;
 }
 
+header{
+  display: flex;
+  align-items: center;
+}
+
 #logo{
   width: 5vw;
-  height: 9vh;
   transform: translate(40vw, 5vh); 
 }
   
