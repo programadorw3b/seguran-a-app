@@ -150,35 +150,39 @@ def senha_cod(email,codigo):
 # Rotas
 
 #Rota index
+
 @app.route('/')
 def index():
     return render_template('index.html')
 
 #Rota para cadastro
+
 @app.route('/cadastro', methods=['GET','POST'])
 def cadastro():
     if request.method == 'POST':
         nome = request.form['nome']
         email = request.form['email'].lower()
         senha = request.form['senha']
+        celular = request.form['celular']
         senha_segura = generate_password_hash(senha)
         db = get_db()
         try:
-            db.execute('INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?)', (nome, email, senha_segura))
+            db.execute('INSERT INTO usuarios (nome, email, senha, celular) VALUES (?, ?, ?, ?)', (nome, email, senha_segura,celular))
             db.commit()
             flash('Usuário cadastrado com sucesso!!!')
-            return redirect(url_for('index'))
+            return redirect(url_for('login'))
         except sqlite3.IntegrityError:
             flash('E-mail já cadastrado!')
             return render_template('register.html')
     return render_template('register.html')
 
 
-#Rota para login
+#Rota para login de usuario
+
 @app.route('/login', methods=['GET','POST'])
 def login():
     if request.method == 'POST':
-        login = request.form['login'].lower()
+        login = request.form['login']
         senha = request.form['senha']
         db = get_db()
         usuario = db.execute('SELECT * FROM usuarios WHERE email=?', (login, )).fetchone()
@@ -192,6 +196,7 @@ def login():
     return render_template('login.html')
 
 #Rota questionary
+
 @app.route('/questionario',methods=['GET','POST'])
 def questionary():
     if request.method == 'POST':
@@ -273,7 +278,8 @@ def password():
         db = get_db()
         cod = db.execute('SELECT rec_code FROM usuarios WHERE email=?',(email,))
         if not cod:
-            return "Código inexistente"
+            flash("Código não gerado ou email inexistente")
+            return redirect(url_for('password'))
         senha_cod(email,cod)
         return redirect(url_for('password_recovery'))
     return render_template('password.html')
@@ -285,23 +291,20 @@ def password_recovery():
     if request.method == "POST":
         codigo = int(request.form.get('codigo'))
         senha = request.form.get('password')
-        senha2 = request.form.get('password2')
         email = session.get('email')
         print(email)
         db = get_db()
         cod = db.execute('SELECT * FROM usuarios WHERE email=?',(email,)).fetchone()
         print(codigo,cod)
         if codigo == cod[7]:
-            if senha == senha2:
-                senha_segura = generate_password_hash(senha)
-                db.execute('UPDATE usuarios SET senha=?',(senha_segura,))
-                session.clear()
-                return redirect(url_for('password_confirm'))
-            else:
-                return flash("Senhas diferentes")
+            senha_segura = generate_password_hash(senha)
+            db.execute('UPDATE usuarios SET senha=? WHERE email=?',(senha_segura,email))
+            session.clear()
+            flash("Senha alterada com sucesso")
+            return redirect(url_for('login'))
         else:
-            return flash("Código inválido ou expirado")
-    return render_template('password_recovery.html') #Adicionar erro
+            flash("Código inválido ou inexistente")
+    return render_template('password_recovery.html')
 
 # rota de confirmação de senha
 
@@ -389,7 +392,8 @@ def register_psi():
         return redirect(url_for('index'))
     return render_template('register_psi.html')
 
-#Rota para login
+#Rota para login de psicologo
+
 @app.route('/login_psi', methods=['GET','POST'])
 def login_psi():
     if request.method == 'POST':
@@ -402,9 +406,17 @@ def login_psi():
             return redirect(url_for('index'))
         else:
             flash('Usuário ou senha inválidos.')
-            return render_template('login.html')
-    return render_template('login.html')
+            return render_template('login_psi.html')
+    return render_template('login_psi.html')
 
+
+#rota para edit user
+
+@app.route('/edit_user')
+def edit_user():
+    db = get_db()
+    usuario = db.execute('SELECT * FROM usuarios WHERE id=?',(session['usuario_id'],)).fetchone()
+    return render_template('edit_user.html',usuario=usuario)
 
 '''
 .env:

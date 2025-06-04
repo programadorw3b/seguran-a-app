@@ -10,76 +10,51 @@
     font-style: normal;
 }
 
-.container{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 90vh;
-}
-
 body{
     background-color: #EEEEEE;
     color: black;
     text-align: center;
-    padding: 20px;
 }
 
 header{
     background-color: #008000;
-    height: 2vh;
-    width: 102.58%;
-    position: relative;
-    top: -2.3vh;
-    left: -1.5vw;
+    height: 20px;
+    width: 100%;
+    position: absolute;
+    top: 0px;
+    left: 0px;
 }
 
-.banner1, .banner2 {
-    height: 71.4vh;
+.container{
+    display: flex;
+    margin: 3%;
 }
 
 .banner1{
     background-color: #FFFFFF;
-    width: 40%;
+    width: 730px;
+    max-width: 730px;
+    max-height: 683px;
+    height: 683px;
     border-radius: 25px;
-    left: 11.6vw;
-    display: flex center;
-    border-top-right-radius: 0px;
-    border-bottom-right-radius: 0px;
 }
 
 .banner1 h1{
     font-size: 36px;
     color: #008000;
     font-weight: 400;
-    position: relative;
-    top: -10vh;
-    right: 5vw;
 }
 
 .banner1 p{
     font-size: 30px;
     color: #FFA63D;
     font-weight: 400;
-    position: relative;
-    top: -8vh;
-    right: 5vw;
-    
-}
-
-#logo{
-    position: relative;
-    top: 0vh;
-    left: -16vw;
 }
 
 form{
     display: flex;
     flex-direction: column;
-    gap: 30px;
-    width: 26vw;
-    position: relative;
-    bottom: 30vh;
-    left: 4vw;
+    width: 469px;
 }
 
 input[type=text]{
@@ -113,78 +88,88 @@ input[type=password]{
 }
 
 input[type=checkbox]{
-    position: absolute;
     height: 18px;
     width: 17px;
-    left: 0px;
-    bottom: -60px;
     text-align: center;
 }
 
 label{
     font-weight: 600;
     color: #7E7777;
-    position: absolute;
     font-size: 13px;
     text-align: left;
-    left: 25px;
-    bottom: -68px;
+}
+
+.politica{
+    margin: 10px 10px;
+    align-items: center;
+    display: flex;
+    gap: 5px;
 }
 
 #entrar{
-    position: absolute;
-    bottom: -150px;
-    left: 140px;
     width: 174px;
     height: 40px;
     background-color: #ff962c;
     color: #007f14;
     border: none;
     border-radius: 8px;
+    margin: 20px 30% 0 30%;
 }
 
 #entrar:hover{
-    transition: all 0.3s ease-out;
+    transition: all 0.3s ease-in-out;
     background-color: #007f14;
     color: #ff962c;
     cursor: pointer;
 }
 
-#usuario_icone{
-    width: 7%;
-    height: 4vh;
+#usuario_icone1{
+    width: 27px;
+    height: 27px;
     position: relative;
-    top: 27.5vh;
-    left: 0.6vw;
+    top: 40px;
+    right: 40%;
 }
 
-#celular_icone{
-    width: 5%;
-    height: 4vh;
+#usuario_icone2{
+    width: 27px;
+    height: 27px;
     position: relative;
-    top: 28.8vh;
-    left: 0.8vw;
+    top: 40px;
+    right: 40%;
 }
 
 #email_icone{
-    width: 34px;
+    width: 33px;
     height: 33px;
     position: relative;
-    top: 30.2vh;
-    left: 0.6vw;
+    top: 46px;
+    right: 40%;
 }
 
 #cadeado_icone{
     width: 28px;
     height: 29px;
     position: relative;
-    top: 31.8vh;
-    left: 0.6vw;
+    top: 41px;
+    right: 40%;
+}
+
+#acessibilidade{
+    width: 80.4px;
+    height: 67px;
+    position: absolute;
+    top: 350px;
+    right: 0px;
 }
 
 .banner2{
     background-color: #008000;
-    width: 40%;
+    width: 715px;
+    max-width: 715px;
+    max-height: 683px;
+    height: 683px;
     border-top-right-radius: 25px;
     border-bottom-right-radius: 25px;
 }
@@ -192,25 +177,18 @@ label{
 .banner2 h1{
     font-size: 48px;
     font-weight: 800;
-    position: relative;
-    top: 4vh;
-    right: -1vw;
     color: #FFFFFF;
+    margin: 20%;
 }
 
-.banner2 img{
-    position: relative;
-    top: 15vh;
+#seguranca{
+    justify-items: center;
 }
 
 #seta_icone{
-    width: auto;
-    height: 7vh;
+    width: 70px;
+    height: 70px;
     position: relative;
-    top: -20vh;
-    right: 16vw;
-}
-
-#seta_icone:hover{
-    cursor: pointer;
+    left: -40%;
+    bottom: 7.5%;
 }

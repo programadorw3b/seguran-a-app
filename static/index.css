@@ -97,6 +97,27 @@ nav ul li:hover{
   color: var(--verde-principal);
 }
 
+/* popup */
+.popup{
+  display: none;
+  flex-direction: column;
+  width: fit-content;
+  height: fit-content;
+  background-color: #006400;
+  padding: 10px;
+  border-radius: 10px;
+  position: absolute;
+  top: 100px;
+  right: 10px;
+  z-index: 1000;
+  gap: 20px;
+}
+
+.popup a{
+  color: white;
+  text-decoration: none;
+}
+
 /* Estilo do menu toggle (responsivo) */
 .menu-toggle {
   display: none;
