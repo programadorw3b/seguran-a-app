@@ -4,6 +4,7 @@ import sqlite3
 from flask import Flask, render_template, request, redirect, url_for, session, flash, g, jsonify
 import json
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 import random
 import smtplib # enviar email
@@ -22,6 +23,11 @@ app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024 
 
 EXTENSOES = {'png', 'jpg', 'jpeg', 'webp'}
+
+# chechar extensão
+
+def check_extension(nome_foto):
+    return '.' in nome_foto and nome_foto.lower().rsplit('.',1)[1] in EXTENSOES
 
 # inicio do banco de dados
 
@@ -162,12 +168,19 @@ def cadastro():
     if request.method == 'POST':
         nome = request.form['nome']
         email = request.form['email'].lower()
+        foto = request.files['foto']
         senha = request.form['senha']
         celular = request.form['celular']
         senha_segura = generate_password_hash(senha)
+        nome_foto = None
         db = get_db()
         try:
-            db.execute('INSERT INTO usuarios (nome, email, senha, celular) VALUES (?, ?, ?, ?)', (nome, email, senha_segura,celular))
+            if foto and check_extension(foto.filename):
+                nome_foto = secure_filename(foto.filename)
+                foto.save(os.path.join(app.config['UPLOAD_FOLDER'],nome_foto))
+                db.execute('INSERT INTO usuarios (nome,email,senha,imagem,celular) VALUES (?,?,?,?,?)',(nome,email,senha_segura,nome_foto,celular))
+            else:
+                db.execute('INSERT INTO usuarios (nome, email, senha, celular) VALUES (?, ?, ?, ?)', (nome, email, senha_segura,celular))
             db.commit()
             flash('Usuário cadastrado com sucesso!!!')
             return redirect(url_for('login'))
@@ -189,6 +202,7 @@ def login():
         if usuario and check_password_hash(usuario['senha'], senha):
             session['usuario_id'] = usuario['id']
             session['user_admin'] = usuario['admin']
+            session['usuario_tipo'] = 'user'
             return redirect(url_for('index'))
         else:
             flash('Usuário ou senha inválidos.')
@@ -369,6 +383,7 @@ def register_psi():
         nome = request.form.get('nome')
         crp = request.form.get('crp')
         email = request.form.get('email')
+        foto = request.files.get('foto')
         senha = request.form.get('senha')
         senha_segura = generate_password_hash(senha)
         inicio_str = request.form.get('inicio')
@@ -377,9 +392,6 @@ def register_psi():
         inicio = datetime.strptime(inicio_str,'%H:%M')
         final = datetime.strptime(final_str,'%H:%M')
         intervalo = timedelta(minutes=intervalo_m)
-        print(inicio)
-        print(intervalo)
-        print(final)
         horarios = []
         while inicio + intervalo <= final:
             proximo = inicio + intervalo
@@ -387,7 +399,12 @@ def register_psi():
             inicio = proximo
         horarios_json = json.dumps(horarios)
         db = get_db()
-        db.execute('INSERT INTO psicologos (nome,crp,email,senha,horarios) VALUES (?,?,?,?,?)',(nome,crp,email,senha_segura,horarios_json))
+        if foto and check_extension(foto.filename):
+            nome_foto = secure_filename(foto.filename)
+            foto.save(os.path.join(app.config['UPLOAD_FOLDER'],nome_foto))
+            db.execute('INSERT INTO psicologos (nome,crp,email,imagem,senha,horarios) VALUES (?,?,?,?,?,?)',(nome,crp,email,nome_foto,senha_segura,horarios_json))
+        elif not foto:
+            db.execute('INSERT INTO psicologos (nome,crp,email,senha,horarios) VALUES (?,?,?,?,?)',(nome,crp,email,senha_segura,horarios_json))
         db.commit()
         return redirect(url_for('index'))
     return render_template('register_psi.html')
@@ -412,11 +429,75 @@ def login_psi():
 
 #rota para edit user
 
-@app.route('/edit_user')
+@app.route('/edit_user',methods=['GET','POST'])
 def edit_user():
     db = get_db()
     usuario = db.execute('SELECT * FROM usuarios WHERE id=?',(session['usuario_id'],)).fetchone()
+    if request.method == 'POST':
+        if session['usuario_tipo'] == 'user':
+            nome = request.form['nome']
+            celular = request.form['celular']
+            email = request.form['email']
+            foto = request.files['foto']
+            if nome:
+                db.execute('UPDATE usuarios SET nome=? WHERE id=?',(nome,session['usuario_id']))
+            if celular:
+                db.execute('UPDATE usuarios SET celular=? WHERE id=?',(celular,session['usuario_id']))
+            if email:
+                db.execute('UPDATE usuarios SET email=? WHERE id=?',(email,session['usuario_id']))
+            if foto and check_extension(foto.filename):
+                if usuario['imagem']:
+                    diretorio_imagem = os.path.join('static','uploads',usuario['imagem'])
+                    foto.save(diretorio_imagem)
+                elif not usuario['imagem']:
+                    nome_foto = None
+                    nome_foto = secure_filename(foto.filename)
+                    foto.save(os.path.join('static','uploads/'+nome_foto))
+                    db.execute('UPDATE usuarios SET imagem VALUES ? WHERE id=?',(nome_foto,session['usuario_id']))
+            db.commit()
+            return render_template('edit_user.html',usuario=usuario)
+        else:
+            nome = request.form['nome']
+            celular = request.form['celular']
+            email = request.form['email']
+            foto = request.files['foto']
+            inicio_str = request.form.get('inicio')
+            final_str = request.form.get('final')
+            intervalo_m = int(request.form.get('intervalo'))
+            if nome:
+                db.execute('UPDATE psicologos SET nome=? WHERE id=?',(nome,session['psicologo_id']))
+            if celular:
+                db.execute('UPDATE psicologos SET celular=? WHERE id=?',(celular,session['psicologo_id']))
+            if email:
+                db.execute('UPDATE psicologos SET email=? WHERE id=?',(email,session['psicologo_id']))
+            if foto and check_extension(foto.filename):
+                if db.execute('SELECT imagem FROM psicologos WHERE id=?',(session['psicologo_id'])).fetchone():
+                    diretorio_imagem = os.path.join('static','uploads',usuario['imagem'])
+                    foto.save(diretorio_imagem)
+                elif not db.execute('SELECT imagem FROM psicologos WHERE id=?',(session['psicologo_id'])).fetchone():
+                    nome_foto = None
+                    nome_foto = secure_filename(foto.filename)
+                    foto.save(os.path.join('static','uploads/'+nome_foto))
+                    db.execute('UPDATE psicologos SET imagem VALUES ? WHERE id=?',(nome_foto,session['psicologo_id']))
+            if inicio_str and final_str and intervalo_m:
+                inicio = datetime.strptime(inicio_str,'%H:%M')
+                final = datetime.strptime(final_str,'%H:%M')
+                intervalo = timedelta(minutes=intervalo_m)
+                horarios = []
+                while inicio + intervalo <= final:
+                    proximo = inicio + intervalo
+                    horarios.append(f"{inicio.strftime('%H:%M')} - {proximo.strftime('%H:%M')}")
+                    inicio = proximo
+                horarios_json = json.dumps(horarios)
+                db.execute('UPDATE psicologos SET horarios=? WHERE id=?',(horarios_json,session['psicologo_id']))
     return render_template('edit_user.html',usuario=usuario)
+
+
+#rota para mostrar consultas usuario
+
+@app.route('/consultas')
+def consultas():
+    return render_template('checkup.html')
 
 '''
 .env:

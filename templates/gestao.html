@@ -30,7 +30,7 @@
                                 <div class="doctor-card">
                                     <div class="doctor-image">
                                         {% if psicologo.imagem %}
-                                            <img src="{{ url_for('static', filename='/uploads'+psicologo.imagem) }}" alt="Dr. {(psicologo.nome)}">
+                                            <img src="{{ url_for('static', filename='uploads/'+psicologo.imagem) }}" alt="Dr. {(psicologo.nome)}">
                                         {% endif %}
                                     </div>
                                     <div class="doctor-info">

@@ -30,7 +30,7 @@
     </nav>
 
     <div class="acoes-header">
-      {% if not session['usuario_id'] %}
+      {% if not (session['usuario_id'] or session['psicologo_id']) %}
         <a href="{{ url_for('login') }}" class="login-icon"><i class="fas fa-user-circle"></i></a>
       {% elif session['user_admin']==1%}
         <a href="{{ url_for('questionary') }}"><button class="btn-destaque">Trilha do Bem Estar</button></a>
@@ -41,6 +41,14 @@
           <a href="{{ url_for('logout') }}">LOGOUT</a>
         </div>
       {% elif session['usuario_id'] %}
+        <a href="{{ url_for('questionary') }}"><button class="btn-destaque">Trilha do Bem Estar</button></a>
+        <!-- colocar função de popup aqui -->
+        <a onclick="mostrar(this)" class="login-icon"><i class="fas fa-user-circle"></i></a>
+        <div class="popup">
+          <a href="{{ url_for('edit_user') }}">Meus dados</a>
+          <a href="/logout">LOGOUT</a>
+        </div>
+      {% elif session['psicologo_id']%}
         <a href="{{ url_for('questionary') }}"><button class="btn-destaque">Trilha do Bem Estar</button></a>
         <!-- colocar função de popup aqui -->
         <a onclick="mostrar(this)" class="login-icon"><i class="fas fa-user-circle"></i></a>

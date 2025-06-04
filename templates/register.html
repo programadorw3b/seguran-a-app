@@ -20,18 +20,23 @@
             <a href="{{url_for('index')}}"><img src="../static/imgs/logo.png" alt="logo" id="logo"></a>
             <h1>MINDCONNECT</h1>
             <p>Cadastre-se</p>
-            <form method="POST" class="requisitos">
+            <form method="POST" class="requisitos" enctype="multipart/form-data">
                 <div> <!-- nome -->
                     <img src="../static/imgs/usuário.png" id="usuario_icone1" alt="usuario_icone1">
                     <input type="text" id="nome" placeholder="Nome" name="nome" required>
                 </div>
-                <div> <!-- sobrenome -->
+                <div> <!-- celular -->
                     <img src="../static/imgs/celular.png" id="usuario_icone2" alt="usuario_icone2">
                     <input type="text" id="sobrenome" placeholder="Celular" minlength="10" name="celular" required>
                 </div>
                 <div> <!-- email -->
                     <img src="../static/imgs/e-mail.png" id="email_icone" alt="email_icone">
                     <input type="email" id="email" placeholder="E-mail" name="email" required>
+                </div>
+                <div> <!-- imagem -->
+                    <br>
+                    <label for="foto">Adicionar foto: </label>
+                    <input type="file" name="foto" id="foto">
                 </div>
                 <div> <!-- senha -->
                     <img src="../static/imgs/cadeado.png" id="cadeado_icone" alt="cadeado_icone">

@@ -95,6 +95,7 @@ nav ul li:hover{
 .login-icon {
   font-size: 28px;
   color: var(--verde-principal);
+  cursor: pointer;
 }
 
 /* popup */

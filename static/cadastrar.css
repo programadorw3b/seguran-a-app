@@ -34,8 +34,7 @@ header{
     background-color: #FFFFFF;
     width: 730px;
     max-width: 730px;
-    max-height: 683px;
-    height: 683px;
+    max-height: fit-content;
     border-radius: 25px;
 }
 
@@ -168,8 +167,7 @@ label{
     background-color: #008000;
     width: 715px;
     max-width: 715px;
-    max-height: 683px;
-    height: 683px;
+    max-height: 888px;
     border-top-right-radius: 25px;
     border-bottom-right-radius: 25px;
 }
@@ -191,4 +189,11 @@ label{
     position: relative;
     left: -40%;
     bottom: 7.5%;
+}
+
+.horarios{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-row-gap: 10px;
+    margin: 10px;
 }

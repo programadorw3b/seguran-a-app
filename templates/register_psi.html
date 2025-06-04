@@ -12,27 +12,37 @@
 </head>
 <body>
         <header>
-            <div></div>
+            <div></div> <!-- linha verde superior -->
         </header>
-    
         <div class="banners">
         <main class="container">
             <div class="banner1">
                 <img src="../static/imgs/logo.png" alt="logo" id="logo">
                 <h1>MINDCONNECT</h1>
-                <p>Cadastre-se</p>
-                <form method="POST" class="requisitos">
-                    <img src="../static/imgs/usuário.png" id="usuario_icone" alt="usuario_icone">
-                    <img src="../static/imgs/celular.png" id="celular_icone" alt="celular_icone">
-                    <img src="../static/imgs/e-mail.png" id="email_icone" alt="email_icone">
-                    <img src="../static/imgs/cadeado.png" id="cadeado_icone" alt="cadeado_icone">
-                    <input type="text" id="nome" placeholder="Nome" name="nome" required>
-                    <input type="text" id="crp" placeholder="CRP" name="crp" required>
-                    <input type="email" id="email" placeholder="E-mail" name="email" required>
-                    <input type="password" id="senha" placeholder="Criar senha" name="senha" required>
-                    <input type="checkbox" name="politicas" required/><label id="politicas" for="politicas">Eu concordo com os <a href="{{ url_for('termos') }}" target="none">termos de uso</a> e entendo que minhas informações serão mantidas em sigilo total.</label>
-                    <div>
-                        <img src="" alt="relogio">
+                <p>Cadastrar psicologo</p>
+                <form method="POST" class="requisitos" enctype="multipart/form-data">
+                    <div> <!-- nome -->
+                        <img src="../static/imgs/usuário.png" id="usuario_icone1" alt="usuario_icone1">
+                        <input type="text" id="nome" placeholder="Nome" name="nome" required>
+                    </div>
+                    <div> <!-- CRP -->
+                        <img src="../static/imgs/crp.png" id="usuario_icone2" alt="usuario_icone2">
+                        <input type="text" id="sobrenome" placeholder="CRP" minlength="10" name="crp" required>
+                    </div>
+                    <div> <!-- email -->
+                        <img src="../static/imgs/e-mail.png" id="email_icone" alt="email_icone">
+                        <input type="email" id="email" placeholder="E-mail" name="email" required>
+                    </div>
+                    <div> <!-- imagem -->
+                        <br>
+                        <label for="foto">Adicionar foto: </label>
+                        <input type="file" name="foto" id="foto">
+                    </div>
+                    <div> <!-- senha -->
+                        <img src="../static/imgs/cadeado.png" id="cadeado_icone" alt="cadeado_icone">
+                        <input type="password" id="senha" placeholder="Criar senha" name="senha" required>
+                    </div>
+                    <div class="horarios"> <!-- horarios -->
                         <label for="inicio">Horario inicial de atendimento</label>
                         <input type="time" name="inicio" id="inicio" required>
                         <label for="final">Horario final de atendimento</label>
@@ -43,6 +53,10 @@
                             <option value="30">30 minutos</option>
                             <option value="60">60 minutos</option>
                         </select>
+                    </div>
+                    <div class="politica"> <!-- politicas concordo -->
+                        <input type="checkbox" id="politicas" required/>
+                        <label id="politicas" for="politicas">Eu concordo com os <a href="{{ url_for('termos') }}" target="none">termos de uso</a> e entendo que minhas informações serão mantidas em sigilo total.</label>
                     </div>
                     <button type="submit" id="entrar" class="entrar">Cadastrar</button>
                 </form>
