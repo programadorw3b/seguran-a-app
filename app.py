@@ -322,12 +322,6 @@ def password_recovery():
             flash("Código inválido ou inexistente")
     return render_template('password_recovery.html')
 
-# rota de confirmação de senha
-
-@app.route('/password_confirm')
-def password_confirm():
-    return render_template('password_confirm.html')
-
 # rota para agendar consulta
 
 @app.route('/agendar',methods=['GET','POST'])

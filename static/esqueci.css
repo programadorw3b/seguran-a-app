@@ -19,9 +19,9 @@ body{
 }
 
 .sup{
-    display: flex;
     align-items: center;
-    justify-content: space-evenly;
+    display: flex;
+    justify-content: center;
 }
 
 #accessibility{
