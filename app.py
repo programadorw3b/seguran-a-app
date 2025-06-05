@@ -26,12 +26,12 @@ else:
     current_dir = basedir
 
 #carregar .env
-dotenv_path = os.path.join(current_dir,'.env')
+dotenv_path = os.path.join(basedir,'.env')
 if os.path.exists(dotenv_path):
     load_dotenv(dotenv_path)
 
 #database path
-DATABASE_PATH = os.path.join(current_dir,'mindconnect.db')
+DATABASE_PATH = os.path.join(basedir, 'mindconnect.db')
 
 app = Flask(
             __name__,
@@ -39,7 +39,7 @@ app = Flask(
             static_folder=os.path.join(basedir,'static'))
 
 app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
-app.config['UPLOAD_FOLDER'] = 'static/uploads'
+app.config['UPLOAD_FOLDER'] = os.path.join(basedir, 'static', 'uploads')
 app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024 
 
 # chechar extensão
