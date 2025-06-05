@@ -64,6 +64,8 @@ nav ul li a {
 .perfil-container {
   display: flex;
   justify-content: center;
+  gap: 20px;
+  align-items: center;
   background-color: #eee;
   padding: 150px;
   margin: 43px auto;
@@ -72,6 +74,7 @@ nav ul li a {
 
 .foto-perfil {
   text-align: center;
+  margin-right: 20px;
 }
 
 .imagem-perfil {
@@ -124,7 +127,25 @@ nav ul li a {
   width: 150px;
 }
 
-button a{
+form a,button{
   text-decoration: none;
   color: black;
+  width: 100%;
+  border: 1px solid black;
+  text-align: center;
+  height: fit-content;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+#apagar{
+  border-radius: 10px;
+  padding: 10px;
+  transition-duration: .5s;
+}
+
+#apagar:hover{
+  transform: scale(1.1);
+  background-color: red;
+  color: white;
 }

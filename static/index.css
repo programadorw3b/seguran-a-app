@@ -93,7 +93,7 @@ nav ul li:hover{
 
 /* Ícone de login */
 .login-icon {
-  font-size: 28px;
+  font-size: 50px;
   color: var(--verde-principal);
   cursor: pointer;
 }

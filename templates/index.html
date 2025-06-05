@@ -36,6 +36,7 @@
         <a href="{{ url_for('questionary') }}"><button class="btn-destaque">Trilha do Bem Estar</button></a>
         <a onclick="mostrar(this)" class="login-icon"><i class="fas fa-user-circle"></i></a>
         <div class="popup">
+          <a href="{{ url_for('edit_user') }}">MEUS DADOS</a>
           <a href="{{ url_for('register_psi') }}">REGISTRAR PSICOLOGO</a>
           <a href="{{ url_for('logout') }}">LOGOUT</a>
         </div>
@@ -43,14 +44,14 @@
         <a href="{{ url_for('questionary') }}"><button class="btn-destaque">Trilha do Bem Estar</button></a>
         <a onclick="mostrar(this)" class="login-icon"><i class="fas fa-user-circle"></i></a>
         <div class="popup">
-          <a href="{{ url_for('edit_user') }}">Meus dados</a>
+          <a href="{{ url_for('edit_user') }}">MEUS DADOS</a>
           <a href="/logout">LOGOUT</a>
         </div>
       {% elif session['psicologo_id']%}
         <a href="{{ url_for('questionary') }}"><button class="btn-destaque">Trilha do Bem Estar</button></a>
         <a onclick="mostrar(this)" class="login-icon"><i class="fas fa-user-circle"></i></a>
         <div class="popup">
-          <a href="{{ url_for('edit_user') }}">Meus dados</a>
+          <a href="{{ url_for('edit_user') }}">MEUS DADOS</a>
           <a href="/logout">LOGOUT</a>
         </div>
       {% endif %}

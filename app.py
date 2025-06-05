@@ -68,7 +68,6 @@ def inicializar_banco():
                 nome TEXT NOT NULL,
                 crp TEXT UNIQUE NOT NULL,
                 imagem TEXT,
-                celular INTEGER,
                 email TEXT UNIQUE NOT NULL,
                 senha TEXT NOT NULL,
                 horarios TEXT NOT NULL
@@ -306,12 +305,10 @@ def password():
 def password_recovery():
     if request.method == "POST":
         codigo = int(request.form.get('codigo'))
-        senha = request.form.get('password')
+        senha = request.form.get('password2')
         email = session.get('email')
-        print(email)
         db = get_db()
         cod = db.execute('SELECT * FROM usuarios WHERE email=?',(email,)).fetchone()
-        print(codigo,cod)
         if codigo == cod[7]:
             senha_segura = generate_password_hash(senha)
             db.execute('UPDATE usuarios SET senha=? WHERE email=?',(senha_segura,email))
@@ -319,6 +316,7 @@ def password_recovery():
             flash("Senha alterada com sucesso")
             return redirect(url_for('login'))
         else:
+            session.clear()
             flash("Código inválido ou inexistente")
     return render_template('password_recovery.html')
 
@@ -342,7 +340,8 @@ def agendar():
 
             if data_horario_dt > datetime.now():
                 db.execute('INSERT INTO ocupado (nome,data,horario) VALUES (?,?,?)',(nome,data_str,horario_str))
-                db.execute('INSERT INTO consultas (data,horario,paciente_id,psicologo_id) VALUES (?,?,?,?)',(data_str,horario_str,session['usuario_id'],nome))
+                psi_id = db.execute('SELECT id FROM psicologos WHERE nome=?',(nome,)).fetchone()
+                db.execute('INSERT INTO consultas (data,horario,paciente_id,psicologo_id) VALUES (?,?,?,?)',(data_str,horario_str,session['usuario_id'],psi_id[0]))
                 db.commit()
                 return redirect(url_for('index'))
     return render_template('gestao.html',psicologos=psicologos)
@@ -426,10 +425,35 @@ def login_psi():
 
 @app.route('/edit_user',methods=['GET','POST'])
 def edit_user():
+    if not session:
+        return redirect(url_for('index'))
     db = get_db()
-    usuario = db.execute('SELECT * FROM usuarios WHERE id=?',(session['usuario_id'],)).fetchone()
+    usuario = None
+    psicologo = None
+    if session.get('usuario_id'):
+        usuario = db.execute('SELECT * FROM usuarios WHERE id=?',(session['usuario_id'],)).fetchone()
+    else:
+        psicologo = db.execute('SELECT * FROM psicologos WHERE id=?',(session['psicologo_id'],)).fetchone()
     if request.method == 'POST':
-        if session['usuario_tipo'] == 'user':
+        apagar = request.form.get('apagar')
+        if apagar == '1':
+            if usuario:
+                nome_foto = db.execute('SELECT imagem FROM usuarios WHERE id=?',(session['usuario_id'],)).fetchone()
+                if nome_foto and nome_foto[0]:
+                    os.remove(os.path.join('static','uploads',nome_foto[0]))
+                db.execute('DELETE FROM usuarios WHERE id=?',(session['usuario_id'],))
+                db.commit()
+                session.clear()
+                return redirect(url_for('index'))
+            elif psicologo:
+                nome_foto = db.execute('SELECT imagem FROM psicologos WHERE id=?',(session['psicologo_id'],)).fetchone()
+                if nome_foto and nome_foto[0]:
+                    os.remove(os.path.join('static','uploads',nome_foto[0]))
+                db.execute('DELETE FROM psicologos WHERE id=?',(session['psicologo_id'],))
+                db.commit()
+                session.clear()
+                return redirect(url_for('index'))
+        if usuario:
             nome = request.form['nome']
             celular = request.form['celular']
             email = request.form['email']
@@ -448,12 +472,11 @@ def edit_user():
                     nome_foto = None
                     nome_foto = secure_filename(foto.filename)
                     foto.save(os.path.join('static','uploads/'+nome_foto))
-                    db.execute('UPDATE usuarios SET imagem VALUES ? WHERE id=?',(nome_foto,session['usuario_id']))
+                    db.execute('UPDATE usuarios SET imagem=? WHERE id=?',(nome_foto,session['usuario_id']))
             db.commit()
-            return render_template('edit_user.html',usuario=usuario)
+            return render_template('edit_user.html',usuario=usuario,psicologo=psicologo)
         else:
             nome = request.form['nome']
-            celular = request.form['celular']
             email = request.form['email']
             foto = request.files['foto']
             inicio_str = request.form.get('inicio')
@@ -461,19 +484,17 @@ def edit_user():
             intervalo_m = int(request.form.get('intervalo'))
             if nome:
                 db.execute('UPDATE psicologos SET nome=? WHERE id=?',(nome,session['psicologo_id']))
-            if celular:
-                db.execute('UPDATE psicologos SET celular=? WHERE id=?',(celular,session['psicologo_id']))
             if email:
                 db.execute('UPDATE psicologos SET email=? WHERE id=?',(email,session['psicologo_id']))
             if foto and check_extension(foto.filename):
                 if db.execute('SELECT imagem FROM psicologos WHERE id=?',(session['psicologo_id'])).fetchone():
-                    diretorio_imagem = os.path.join('static','uploads',usuario['imagem'])
+                    diretorio_imagem = os.path.join('static','uploads',psicologo['imagem'])
                     foto.save(diretorio_imagem)
                 elif not db.execute('SELECT imagem FROM psicologos WHERE id=?',(session['psicologo_id'])).fetchone():
                     nome_foto = None
                     nome_foto = secure_filename(foto.filename)
                     foto.save(os.path.join('static','uploads/'+nome_foto))
-                    db.execute('UPDATE psicologos SET imagem VALUES ? WHERE id=?',(nome_foto,session['psicologo_id']))
+                    db.execute('UPDATE psicologos SET imagem=? WHERE id=?',(nome_foto,session['psicologo_id']))
             if inicio_str and final_str and intervalo_m:
                 inicio = datetime.strptime(inicio_str,'%H:%M')
                 final = datetime.strptime(final_str,'%H:%M')
@@ -485,7 +506,9 @@ def edit_user():
                     inicio = proximo
                 horarios_json = json.dumps(horarios)
                 db.execute('UPDATE psicologos SET horarios=? WHERE id=?',(horarios_json,session['psicologo_id']))
-    return render_template('edit_user.html',usuario=usuario)
+            db.commit()
+            return render_template('edit_user.html',psicologo=psicologo,usuario=usuario)
+    return render_template('edit_user.html',usuario=usuario,psicologo=psicologo)
 
 
 #rota para mostrar consultas usuario
@@ -494,14 +517,22 @@ def edit_user():
 def consultas():
     if not session:
         return redirect(url_for('login'))
-    if session['usuario_id']:
+    if session.get('usuario_id'):
         db = get_db()
         consultas_marcadas = db.execute('SELECT * FROM consultas WHERE paciente_id=?',(session['usuario_id'],)).fetchall()
         psicologos = []
         for consulta in consultas_marcadas:
-            psicologo = db.execute('SELECT * FROM psicologos WHERE nome=?',(consulta['psicologo_id'],)).fetchone()
+            psicologo = db.execute('SELECT * FROM psicologos WHERE id=?',(consulta['psicologo_id'],)).fetchone()
             psicologos.append(psicologo)
         return render_template('check_up.html',consultas_marcadas=consultas_marcadas,psicologos=psicologos)
+    else:
+        db = get_db()
+        consultas_marcadas = db.execute('SELECT * FROM consultas WHERE psicologo_id=?',(session['psicologo_id'],)).fetchall()
+        usuarios = []
+        for consulta in consultas_marcadas:
+            usuario = db.execute('SELECT * FROM usuarios WHERE id=?',(consulta['paciente_id'],)).fetchone()
+            usuarios.append(usuario)
+        return render_template('check_up.html',consultas_marcadas=consultas_marcadas,usuarios=usuarios)
     return render_template('check_up.html')
 
 '''

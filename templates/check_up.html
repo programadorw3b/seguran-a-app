@@ -12,27 +12,53 @@
 <body>
     <header class="header">
         <a href="{{ url_for('index') }}"><img class="logo-image" src="../static/imgs/logo.png" alt="logo" id="logo"></a>
-        <h1>Consultas marcadas com:</h1>
+        <h1>Minhas consultas marcadas:</h1>
         <div></div>
     </header>
     <main class="main-content">
         {% if consultas_marcadas%}
-            {% for i in range(consultas_marcadas|length) %}
-                {% set consulta = consultas_marcadas[i] %}
-                {% set psicologo = psicologos[i] %}
+            {% if session['usuario_id'] %}
+                {% for i in range(consultas_marcadas|length) %}
+                    {% set consulta = consultas_marcadas[i] %}
+                    {% set psicologo = psicologos[i] %}
+                        <div class="doctor-card">
+                            <div class="doctor-image">
+                                {% if psicologo.imagem%}
+                                    <img src="{{url_for('static',filename='uploads/'+psicologo['imagem'])}}" alt="Dr. {{psicologo['nome']}}">
+                                {% else %}
+                                    <img src="{{url_for('static',filename='imgs/usuário.png')}}" alt="Dr. {{psicologo['nome']}}">
+                                {% endif %}
+                            </div>
+                            <div class="doctor-info">
+                                <h2>Dr. {{psicologo.nome}}</h2>
+                                <p class="license">CRP: {{psicologo.crp}}</p>
+                                <p>Data: {{consulta.data}}</p>
+                                <p>Horário: {{consulta.horario}}</p>
+                                <div class="divider"></div>
+                            </div>
+                        </div>
+                {%endfor%}
+            {% else %}
+                {% for i in range(consultas_marcadas|length) %}
+                    {% set consulta = consultas_marcadas[i] %}
+                    {% set usuario = usuarios[i] %}
                     <div class="doctor-card">
                         <div class="doctor-image">
-                            <img src="{{url_for('static',filename='uploads/'+psicologo['imagem'])}}" alt="Dr. {{psicologo['id']}}">
+                            {% if usuario.imagem%}
+                                <img src="{{url_for('static',filename='uploads/'+usuario['imagem'])}}" alt="Dr. {{usuario['nome']}}">
+                            {% else %}
+                                <img src="{{url_for('static',filename='imgs/usuário.png')}}" alt="{{usuario['nome']}}">
+                            {%endif%}
                         </div>
                         <div class="doctor-info">
-                            <h2>Dr. {{consulta.psicologo_id}}</h2>
-                            <p class="license">CRP: {{psicologo.crp}}</p>
+                            <h2>Paciente: {{usuario.nome}}</h2>
                             <p>Data: {{consulta.data}}</p>
                             <p>Horário: {{consulta.horario}}</p>
                             <div class="divider"></div>
                         </div>
                     </div>
-            {%endfor%}
+                {%endfor%}
+            {%endif%}
         {%endif%}
     </main>
 </body>

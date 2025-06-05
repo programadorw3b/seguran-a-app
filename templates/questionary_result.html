@@ -18,14 +18,11 @@
                 <section>
                     <ul class="nav">
                         <li><a href="{{ url_for('index') }}">Inicio</a></li>
-                        <li><a href="#">Recomendações</a></li>
-                        <li><a href="#">Dicas de Relaxamento</a></li>
-                        <li><a href="#">Agendar consulta</a></li>
+                        <li><a href="{{ url_for('recomendation') }}">Recomendações</a></li>
+                        <li><a href="{{ url_for('relax') }}">Dicas de Relaxamento</a></li>
+                        <li><a href="{{ url_for('agendar') }}">Agendar consulta</a></li>
                     </ul>
                 </section>
-            </div>
-            <div>
-                <a href=""><img src="../static/imgs/usuário.png" alt="usuario" class="perfil"></a>
             </div>
         </nav>
         <div class="titulo">
