@@ -1,5 +1,6 @@
 import os
 import re
+import sys
 import sqlite3
 from flask import Flask, render_template, request, redirect, url_for, session, flash, g, jsonify
 import json
@@ -12,17 +13,34 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from contextlib import contextmanager
 from datetime import datetime,timedelta
-load_dotenv()
 
-# inicio do app
+EXTENSOES = {'png', 'jpg', 'jpeg', 'webp'}
 
-app = Flask(__name__)
+# inicialização caso esteja em .exe
+
+if getattr(sys,'frozen',False):
+    basedir = sys._MEIPASS
+    current_dir = os.path.dirname(sys.executable)
+else:
+    basedir =os.path.abspath('.')
+    current_dir = basedir
+
+#carregar .env
+dotenv_path = os.path.join(current_dir,'.env')
+if os.path.exists(dotenv_path):
+    load_dotenv(dotenv_path)
+
+#database path
+DATABASE_PATH = os.path.join(current_dir,'mindconnect.db')
+
+app = Flask(
+            __name__,
+            template_folder=os.path.join(basedir,'templates'),
+            static_folder=os.path.join(basedir,'static'))
 
 app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024 
-
-EXTENSOES = {'png', 'jpg', 'jpeg', 'webp'}
 
 # chechar extensão
 
@@ -567,4 +585,4 @@ if __name__ == '__main__':
             senha_adm = generate_password_hash(adm_senha)
             db.execute('INSERT INTO usuarios (nome, email, senha, admin) VALUES (?, ?, ?, 1)', (adm_nome, adm_email, senha_adm))
             db.commit()
-    app.run(debug=True)
+    app.run(debug=False)
