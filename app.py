@@ -550,6 +550,8 @@ SENHA_REMETENTE=adm123
 def logout():
     session.clear()
     return redirect(url_for('index'))
+
+
 # execução do app
 
 if __name__ == '__main__':
@@ -559,10 +561,10 @@ if __name__ == '__main__':
         db = get_db()
         admin =  db.execute('SELECT * FROM usuarios where admin=1').fetchall()
         if not admin:
-                adm_nome = os.getenv("ADM_NOME")
-                adm_email = os.getenv("ADM_EMAIL")
-                adm_senha = os.getenv("ADM_SENHA")
-                senha_adm = generate_password_hash(adm_senha)
-                db.execute('INSERT INTO usuarios (nome, email, senha, admin) VALUES (?, ?, ?, 1)', (adm_nome, adm_email, senha_adm))
-                db.commit()
+            adm_nome = os.getenv("ADM_NOME")
+            adm_email = os.getenv("ADM_EMAIL")
+            adm_senha = os.getenv("ADM_SENHA")
+            senha_adm = generate_password_hash(adm_senha)
+            db.execute('INSERT INTO usuarios (nome, email, senha, admin) VALUES (?, ?, ?, 1)', (adm_nome, adm_email, senha_adm))
+            db.commit()
     app.run(debug=True)

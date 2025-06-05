@@ -25,7 +25,7 @@ body {
 .faixa-topo {
   height: 15px;
   background-color: var(--verde-principal);
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
@@ -35,12 +35,11 @@ body {
 /* Cabeçalho */
 header {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   background: var(--branco);
   padding: 30px 20px 15px; /* adiciona espaço para a faixa fixa */
   flex-wrap: wrap;
-  position: relative;
   margin-top: 15px; /* evita sobreposição da faixa */
 }
 
@@ -79,14 +78,11 @@ header{
 
 #logo{
   width: 5vw;
-  transform: translate(40vw, 5vh); 
 }
   
 #mindconnect{
   font-size: 3rem;
   color: #006400;
-  transform: translate(46vw, 7vh);
-  position: fixed;
   font-weight: bold;
 }
 
